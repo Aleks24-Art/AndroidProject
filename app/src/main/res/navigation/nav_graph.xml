@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/videoListFragment">
+
+    <fragment
+        android:id="@+id/videoListFragment"
+        android:name="ua.artemii.internshipmovieproject.fragments.VideoListFragment"
+        android:label="VideoListFragment" >
+        <action
+            android:id="@+id/action_videoListFragment_to_detailVideoInfoFragment"
+            app:destination="@id/detailVideoInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailVideoInfoFragment"
+        android:name="ua.artemii.internshipmovieproject.fragments.DetailVideoInfoFragment"
+        android:label="DetailVideoInfoFragment" >
+        <action
+            android:id="@+id/action_detailVideoInfoFragment_to_descriptionVideoFragment"
+            app:destination="@id/descriptionVideoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/descriptionVideoFragment"
+        android:name="ua.artemii.internshipmovieproject.fragments.DescriptionVideoFragment"
+        android:label="DescriptionVideoFragment" />
+</navigation>
