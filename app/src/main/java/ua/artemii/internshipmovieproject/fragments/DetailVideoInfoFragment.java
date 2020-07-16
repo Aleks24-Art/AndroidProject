@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import ua.artemii.internshipmovieproject.MainActivity;
+import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.FragmentDetailVideoInfoBinding;
 
 public class DetailVideoInfoFragment extends Fragment {
@@ -32,7 +34,7 @@ public class DetailVideoInfoFragment extends Fragment {
         detailInfoBinding.btnToThirdFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).goToDescriptionVideoFragment();
+                Navigation.findNavController(v).navigate(R.id.action_detailVideoInfoFragment_to_descriptionVideoFragment);
             }
         });
     }

@@ -2,6 +2,8 @@ package ua.artemii.internshipmovieproject;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,18 +41,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        makeAppFullScreen();
         binding
                 = ActivityMainBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
-
         navController = Navigation.findNavController(this, R.id.video_list_nav_host_fragment);
-    }
-
-    /**
-     * Navigate from videoListFragment to detailVideoInfoFragment
-     */
-    public void goToDetailVideoInfoFragment() {
-        navController.navigate(R.id.action_videoListFragment_to_detailVideoInfoFragment);
     }
 
     /**
@@ -84,5 +80,13 @@ public class MainActivity extends AppCompatActivity {
        } else {
            navController.popBackStack();
        }
+    }
+
+    private void makeAppFullScreen() {
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        getSupportActionBar().hide();
     }
 }
