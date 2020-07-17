@@ -46,15 +46,16 @@ public class MainActivity extends AppCompatActivity {
                 = ActivityMainBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
-        navController = Navigation.findNavController(this, R.id.video_list_nav_host_fragment);
+        navController =
+                Navigation.findNavController(this, R.id.video_list_nav_host_fragment);
     }
 
     /**
      * Navigate from detailVideoInfoFragment to descriptionVideoFragment
      */
-    public void goToDescriptionVideoFragment() {
+    /*public void goToDescriptionVideoFragment() {
         navController.navigate(R.id.action_detailVideoInfoFragment_to_descriptionVideoFragment);
-    }
+    }*/
 
     /**
      * Asks navController about current fragment

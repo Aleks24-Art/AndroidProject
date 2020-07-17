@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: "androidx.navigation.safeargs"
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -12,6 +12,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -49,4 +54,14 @@ dependencies {
     // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //Apache common text
+    implementation 'org.apache.commons:commons-text:1.8'
 }
