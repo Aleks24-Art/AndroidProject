@@ -2,7 +2,7 @@ package ua.artemii.internshipmovieproject.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ShortDescVideo {
+public class VideoListInfoModel {
     @SerializedName("Title")
     private String title;
     @SerializedName("Year")
@@ -14,7 +14,7 @@ public class ShortDescVideo {
     @SerializedName("Poster")
     private String poster;
 
-    public ShortDescVideo(String title, String year, String imdbID, String type, String poster) {
+    public VideoListInfoModel(String title, String year, String imdbID, String type, String poster) {
         this.title = title;
         this.year = year;
         this.imdbID = imdbID;

@@ -1,13 +1,11 @@
 package ua.artemii.internshipmovieproject.model;
 
-import android.media.Rating;
+import android.widget.ImageView;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-public class FullDescVideo {
+public class DetailVideoInfoModel {
 
     @SerializedName("Title")
     @Expose
@@ -50,7 +48,7 @@ public class FullDescVideo {
     private String awards;
     @SerializedName("Poster")
     @Expose
-    private String poster;
+    private String posterUrl;
     @SerializedName("Metascore")
     @Expose
     private String metascore;
@@ -78,6 +76,16 @@ public class FullDescVideo {
     @SerializedName("Website")
     @Expose
     private String website;
+
+    private ImageView poster;
+
+    public ImageView getPoster() {
+        return poster;
+    }
+
+    public void setPoster(ImageView poster) {
+        this.poster = poster;
+    }
 
     public String getTitle() {
         return title;
@@ -183,12 +191,12 @@ public class FullDescVideo {
         this.awards = awards;
     }
 
-    public String getPoster() {
-        return poster;
+    public String getPosterUrl() {
+        return posterUrl;
     }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 
     public String getMetascore() {

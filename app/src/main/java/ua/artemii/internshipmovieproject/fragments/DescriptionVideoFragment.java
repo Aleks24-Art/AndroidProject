@@ -1,6 +1,7 @@
 package ua.artemii.internshipmovieproject.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,32 @@ import ua.artemii.internshipmovieproject.databinding.FragmentDescriptionVideoBin
 
 public class DescriptionVideoFragment extends Fragment {
 
-    FragmentDescriptionVideoBinding descriptionVideoBinding;
+    public static final String TAG = DescriptionVideoFragment.class.getCanonicalName();
+    private FragmentDescriptionVideoBinding descriptionVideoBinding;
+    private String fullPlot;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            DescriptionVideoFragmentArgs args =
+                    DescriptionVideoFragmentArgs.fromBundle(getArguments());
+            fullPlot = args.getFullPlot();
+        }
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        descriptionVideoBinding
-                = FragmentDescriptionVideoBinding.inflate(inflater, container, false);
+        descriptionVideoBinding =
+                FragmentDescriptionVideoBinding.inflate(inflater, container, false);
         return descriptionVideoBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        descriptionVideoBinding.description.setText(fullPlot);
     }
 }

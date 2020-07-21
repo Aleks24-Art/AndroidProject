@@ -5,41 +5,47 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.util.ArrayList;
-import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import ua.artemii.internshipmovieproject.MainActivity;
-import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
-import ua.artemii.internshipmovieproject.model.Search;
-import ua.artemii.internshipmovieproject.services.NetworkService;
+import ua.artemii.internshipmovieproject.viewmodel.VideoListInfoViewModel;
 
-public class VideoListFragment extends Fragment {
+public class VideoListFragment extends Fragment{
 
     public static final String TAG = VideoListFragment.class.getCanonicalName();
     private FragmentVideoListBinding videoListBinding;
     private VideoListAdapter adapter;
-    //private List<ShortDescVideo> shortDescVideoList;
+    /**
+     * Toast for back button
+     */
+    private Toast backToast;
+    /**
+     * Timer for count pause between clicking
+     */
+    private long backPressedTime;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "Starting downloading data");
-        getItemListWithRequest();
+        new ViewModelProvider(this)
+                .get(VideoListInfoViewModel.class)
+                .getVideos("Women")
+                .observe(this, shortDescVideos -> {
+                    adapter.setVideoListInfoModelList(shortDescVideos);
+                    adapter.notifyDataSetChanged();
+                });
+        addCustomBackNavigation();
     }
 
     @Nullable
@@ -48,18 +54,11 @@ public class VideoListFragment extends Fragment {
         if (videoListBinding != null) {
             return videoListBinding.getRoot();
         }
-        videoListBinding
-                = FragmentVideoListBinding.inflate(inflater, container, false);
-
+        videoListBinding =
+                FragmentVideoListBinding.inflate(inflater, container, false);
         initVideoRecyclerView();
         return videoListBinding.getRoot();
     }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
 
     private void initVideoRecyclerView() {
         if (adapter == null) {
@@ -67,37 +66,40 @@ public class VideoListFragment extends Fragment {
                     videoListBinding.rvVideo;
 
             LinearLayoutManager layoutManager =
-                    new LinearLayoutManager(((MainActivity) getActivity())
-                            .getApplicationContext());
+                    new LinearLayoutManager(getContext());
 
             recyclerView.setHasFixedSize(false);
             recyclerView.setLayoutManager(layoutManager);
+
             adapter =
                     new VideoListAdapter(new ArrayList<>());
         }
-        Log.d(TAG, "Setting adapter = " + adapter);
+
         videoListBinding.rvVideo.setAdapter(adapter);
     }
 
-    private void getItemListWithRequest() {
-        NetworkService.getInstance()
-                .getVideoItemService()
-                .getVideoList()
-                .enqueue(new Callback<Search>() {
-                    @Override
-                    public void onResponse(Call<Search> call, Response<Search> response) {
-                        Log.d(TAG, "Setting list = " + response.body().getShortDescVideoList().toString());
-                        adapter.setShortDescVideoList(response.body().getShortDescVideoList());
-                        adapter.notifyDataSetChanged();
-                        Log.d(TAG, "Adapter = " + adapter);
-                    }
-
-                    @Override
-                    public void onFailure(Call<Search> call, Throwable t) {
-
-                    }
-                });
+    private void addCustomBackNavigation() {
+        // This callback will only be called when VideoListFragment is at least Started.
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                    Log.d(TAG, "Зашли в backPressedTime + 2000 > System.currentTimeMillis()");
+                    backToast.cancel();
+                    this.remove();
+                    getActivity().onBackPressed();
+                    return;
+                } else {
+                    Log.d(TAG, "Зашли в else");
+                    backToast = Toast.makeText(getContext(), "Нажмите ещё раз, чтобы выйти", Toast.LENGTH_SHORT);
+                    backToast.show();
+                }
+                backPressedTime = System.currentTimeMillis();
+            }
+        };
+        requireActivity()
+                .getOnBackPressedDispatcher()
+                .addCallback(this, callback);
     }
-
 
 }

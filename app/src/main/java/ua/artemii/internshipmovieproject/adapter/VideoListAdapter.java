@@ -16,28 +16,26 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import ua.artemii.internshipmovieproject.R;
-import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
 import ua.artemii.internshipmovieproject.databinding.ItemVideoBinding;
-import ua.artemii.internshipmovieproject.fragments.DetailVideoInfoFragmentDirections;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
-import ua.artemii.internshipmovieproject.model.ShortDescVideo;
+import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
     private ItemVideoBinding itemBinding;
-    private List<ShortDescVideo> shortDescVideoList;
+    private List<VideoListInfoModel> videoListInfoModelList;
     public static final String TAG = VideoListFragment.class.getCanonicalName();
     Context context;
 
-    public VideoListAdapter(List<ShortDescVideo> shortDescVideoList) {
-        this.shortDescVideoList = shortDescVideoList;
+    public VideoListAdapter(List<VideoListInfoModel> videoListInfoModelList) {
+        this.videoListInfoModelList = videoListInfoModelList;
         notifyDataSetChanged();
-        Log.d(TAG, "URL = " + this.shortDescVideoList);
+        Log.d(TAG, "URL = " + this.videoListInfoModelList);
     }
 
-    public void setShortDescVideoList(List<ShortDescVideo> shortDescVideoList) {
-        this.shortDescVideoList = shortDescVideoList;
+    public void setVideoListInfoModelList(List<VideoListInfoModel> videoListInfoModelList) {
+        this.videoListInfoModelList = videoListInfoModelList;
     }
 
     @NonNull
@@ -56,23 +54,23 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        Log.d(TAG, "URL = " + shortDescVideoList.get(position).getPoster());
+        Log.d(TAG, "URL = " + videoListInfoModelList.get(position).getPoster());
         Glide.with(holder.itemView.getContext())
                 .asBitmap()
-                .load(shortDescVideoList.get(position).getPoster())
-                .error(R.drawable.ic_error_black_50dp)
+                .load(videoListInfoModelList.get(position).getPoster())
+                .error(R.drawable.img_poster_default)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.itemBinding.icVideoPoster);
 
 
-        holder.itemBinding.title.setText(shortDescVideoList.get(position).getTitle());
-        holder.itemBinding.year.setText(shortDescVideoList.get(position).getYear().endsWith("–") ?
-                shortDescVideoList.get(position).getYear() + "nowadays" : shortDescVideoList.get(position).getYear());
+        holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
+        holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith("–") ?
+                videoListInfoModelList.get(position).getYear() + "nowadays" : videoListInfoModelList.get(position).getYear());
     }
 
     @Override
     public int getItemCount() {
-        return shortDescVideoList.size();
+        return videoListInfoModelList.size();
     }
 
     class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -89,7 +87,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         public void onClick(View v) {
             //Navigate from videoListFragment to detailVideoInfoFragment
             VideoListFragmentDirections.ActionVideoListFragmentToDetailVideoInfoFragment action =
-                    VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(shortDescVideoList.get(getAdapterPosition()).getImdbID());
+                    VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(videoListInfoModelList.get(getAdapterPosition()).getImdbID());
             Navigation.findNavController(v).navigate(action);
         }
     }

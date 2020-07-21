@@ -18,11 +18,14 @@
     </fragment>
     <fragment
         android:id="@+id/detailVideoInfoFragment"
-        android:name="ua.artemii.internshipmovieproject.fragments.DetailVideoInfoFragment"
+        android:name="ua.artemii.internshipmovieproject.fragments.DetailVideoFragment"
         android:label="DetailVideoInfoFragment" >
         <action
             android:id="@+id/action_detailVideoInfoFragment_to_descriptionVideoFragment"
-            app:destination="@id/descriptionVideoFragment" />
+            app:destination="@id/descriptionVideoFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <argument
             android:name="imdbID"
             app:argType="string"
@@ -31,5 +34,10 @@
     <fragment
         android:id="@+id/descriptionVideoFragment"
         android:name="ua.artemii.internshipmovieproject.fragments.DescriptionVideoFragment"
-        android:label="DescriptionVideoFragment" />
+        android:label="DescriptionVideoFragment" >
+        <argument
+            android:name="fullPlot"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>

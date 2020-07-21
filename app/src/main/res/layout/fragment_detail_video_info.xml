@@ -1,138 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
-
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp">
-        <LinearLayout
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sv_inner_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginEnd="10dp">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/ic_video_poster_big"
                 android:layout_width="match_parent"
-                android:layout_height="537dp"
-                android:layout_marginEnd="5dp"
-                android:background="@android:color/white" />
+                android:layout_height="437dp"
+                android:background="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/big_title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/aclonica"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/alegreya_bold"
+                android:textColor="#4C4C4C"
                 android:gravity="center"
                 android:text="Title"
-                android:textSize="30dp" />
-            <!--<TextView
+                android:textSize="40sp"
+                app:layout_constraintTop_toBottomOf="@+id/ic_video_poster_big"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <TextView
                 android:id="@+id/released"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Released: "
                 android:layout_marginVertical="10dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Released: "
                 android:textColor="@android:color/black"
-                android:fontFamily=""
-                android:textSize="20sp"/>
+                android:textSize="25sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/big_title" />
+
+            <TextView
+                android:id="@+id/released_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Released info"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/released"
+                app:layout_constraintTop_toBottomOf="@+id/big_title" />
+
             <TextView
                 android:id="@+id/type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Type: "
                 android:layout_marginVertical="10dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:textStyle="bold"
+                android:text="Type: "
                 android:textColor="@android:color/black"
-                android:fontFamily=""
-                android:textSize="20sp"/>
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="@+id/released"
+                app:layout_constraintTop_toBottomOf="@+id/released_info" />
 
+            <TextView
+                android:id="@+id/type_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Type info"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/type"
+                app:layout_constraintTop_toTopOf="@+id/type" />
 
             <TextView
                 android:id="@+id/actors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Actors: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:id="@+id/plot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="@+id/type"
+                app:layout_constraintTop_toBottomOf="@+id/type_info" />
 
-                android:text="Plot: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
+            <TextView
+                android:id="@+id/actors_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Actors info"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/actors"
+                app:layout_constraintTop_toTopOf="@+id/actors" />
+
             <TextView
                 android:id="@+id/runtime"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
-
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Runtime: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="@+id/actors"
+                app:layout_constraintTop_toBottomOf="@+id/actors_info" />
+
+            <TextView
+                android:id="@+id/runtime_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Runtime info"
+                android:textColor="@android:color/black"
+
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.52"
+                app:layout_constraintStart_toEndOf="@+id/runtime"
+                app:layout_constraintTop_toTopOf="@+id/runtime" />
+
             <TextView
                 android:id="@+id/genre"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
-
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Genre: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:id="@+id/director"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="@+id/runtime"
+                app:layout_constraintTop_toBottomOf="@+id/runtime_info" />
 
-                android:text="Director: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
+            <TextView
+                android:id="@+id/genre_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Genre info"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/genre"
+                app:layout_constraintTop_toTopOf="@+id/genre" />
+
             <TextView
                 android:id="@+id/country"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
-
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Country: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:id="@+id/writer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="@+id/genre"
+                app:layout_constraintTop_toBottomOf="@+id/genre_info" />
 
-                android:text="Writer: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
             <TextView
-                android:id="@+id/box_office"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
+                android:id="@+id/country_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:fontFamily="@font/alegreya_sans_sc_medium_italic"
+                android:text="Country info"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/country"
+                app:layout_constraintTop_toTopOf="@+id/country" />
 
-                android:text="BoxOffice: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:id="@+id/production"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
 
-                android:text="Production: "
-                android:textSize="20sp"
-                android:textColor="@android:color/black" />
--->
             <Button
                 android:id="@+id/btn_to_video_description"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"                android:layout_marginVertical="10dp"
-
-                android:text="Button"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:paddingEnd="8dp"
+                android:drawableEnd="@drawable/ic_arrow_forward_black_24dp"
+                android:background="@drawable/item_bg"
+                android:text="Plot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/country_info" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 
