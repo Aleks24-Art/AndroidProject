@@ -17,7 +17,7 @@ public class VideoListInfoViewModel extends ViewModel {
 
     public LiveData<List<VideoListInfoModel>> getVideos(String keyWord) {
         if (videos.getValue() == null) {
-            VideoRepository.getInstance().loadVideoListInfo(keyWord, videoList -> videos.postValue(videoList));
+            VideoRepository.getInstance().loadVideoListInfo(keyWord, videoList -> videos.setValue(videoList));
     }
         return videos;
     }

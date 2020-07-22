@@ -25,7 +25,6 @@ public class VideoRepository {
         return instance;
     }
 
-
     public void loadDetailVideoInfo(String id, String plot, DetailVideoInfoLoadListener listener) {
         Log.i(TAG, "Starting downloading data for detail video fragment");
         VideoLoadService.getInstance()

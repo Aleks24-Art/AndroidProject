@@ -47,7 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
-                android:layout_marginStart="28dp"
                 android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
@@ -78,24 +77,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
-                android:textStyle="bold"
                 android:text="Type: "
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@+id/released"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/released_info" />
 
             <TextView
                 android:id="@+id/type_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Type info"
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/type"
+                app:layout_constraintStart_toStartOf="@+id/released_info"
                 app:layout_constraintTop_toTopOf="@+id/type" />
 
             <TextView
@@ -106,22 +104,21 @@
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Actors: "
                 android:textColor="@android:color/black"
-                android:textStyle="bold"
                 android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@+id/type"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/type_info" />
 
             <TextView
                 android:id="@+id/actors_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Actors info"
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/actors"
+                app:layout_constraintStart_toStartOf="@+id/type_info"
                 app:layout_constraintTop_toTopOf="@+id/actors" />
 
             <TextView
@@ -129,27 +126,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
-                android:textStyle="bold"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Runtime: "
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@+id/actors"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/actors_info" />
 
             <TextView
                 android:id="@+id/runtime_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Runtime info"
                 android:textColor="@android:color/black"
 
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.52"
-                app:layout_constraintStart_toEndOf="@+id/runtime"
+                app:layout_constraintStart_toStartOf="@+id/actors_info"
                 app:layout_constraintTop_toTopOf="@+id/runtime" />
 
             <TextView
@@ -160,22 +155,21 @@
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Genre: "
                 android:textColor="@android:color/black"
-                android:textStyle="bold"
                 android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@+id/runtime"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/runtime_info" />
 
             <TextView
                 android:id="@+id/genre_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Genre info"
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/genre"
+                app:layout_constraintStart_toStartOf="@+id/runtime_info"
                 app:layout_constraintTop_toTopOf="@+id/genre" />
 
             <TextView
@@ -183,12 +177,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
-                android:textStyle="bold"
                 android:fontFamily="@font/alegreya_sans_sc_medium_italic"
                 android:text="Country: "
                 android:textColor="@android:color/black"
                 android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@+id/genre"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/genre_info" />
 
             <TextView
@@ -212,10 +206,12 @@
                 android:layout_margin="15dp"
                 android:paddingEnd="8dp"
                 android:drawableEnd="@drawable/ic_arrow_forward_black_24dp"
-                android:background="@drawable/item_bg"
+                android:background="@drawable/selector_video_item"
                 android:text="Plot"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/country_info" />
+                app:layout_constraintTop_toBottomOf="@+id/country_info"
+                android:elevation="6dp"
+                android:translationZ="4dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     android:paddingBottom="15dp"
     android:layout_margin="8dp"
-    android:background="@drawable/item_bg">
+    android:background="@drawable/selector_video_item"
+    android:elevation="6dp"
+    android:translationZ="4dp">
 
     <ImageView
         android:id="@+id/ic_video_poster"
