@@ -2,6 +2,8 @@ package ua.artemii.internshipmovieproject.repository;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -13,7 +15,7 @@ import ua.artemii.internshipmovieproject.viewmodel.listeners.VideoListLoadListen
 
 public class VideoRepository {
 
-    public static final String TAG = VideoRepository.class.getCanonicalName();
+    private static final String TAG = VideoRepository.class.getCanonicalName();
     private static VideoRepository instance;
 
     private VideoRepository() {}
@@ -32,15 +34,18 @@ public class VideoRepository {
                 .getDetailVideoInfo(id, plot)
                 .enqueue(new Callback<DetailVideoInfoModel>() {
                     @Override
-                    public void onResponse(Call<DetailVideoInfoModel> call, Response<DetailVideoInfoModel> response) {
+                    public void onResponse(@NotNull Call<DetailVideoInfoModel> call, @NotNull Response<DetailVideoInfoModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             listener.detailVideoDataLoad(response.body());
+                        } else {
+                            listener.detailVideoDataFailed(new Throwable("Request failed"));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<DetailVideoInfoModel> call, Throwable t) {
-                        Log.e(TAG, "Request failed: " + t);
+                    public void onFailure(@NotNull Call<DetailVideoInfoModel> call, @NotNull Throwable t) {
+                        Log.e(TAG, "Request failed " + t);
+                        listener.detailVideoDataFailed(t);
                     }
                 });
     }
@@ -52,14 +57,17 @@ public class VideoRepository {
                 .getVideoListInfo(keyWord)
                 .enqueue(new Callback<Search>() {
                     @Override
-                    public void onResponse(Call<Search> call, Response<Search> response) {
-                        if (response.isSuccessful() && response.body().getVideoListInfoModelList().size() > 0) {
+                    public void onResponse(@NotNull Call<Search> call, @NotNull Response<Search> response) {
+                        if (response.isSuccessful() && response.body()  != null && response.body().getVideoListInfoModelList().size() > 0) {
                             listener.videoListDataLoad(response.body().getVideoListInfoModelList());
+                        } else {
+                            listener.videoListDataFailed(new Throwable("Request failed"));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Search> call, Throwable t) {
+                    public void onFailure(@NotNull Call<Search> call, @NotNull Throwable t) {
+                        listener.videoListDataFailed(t);
                     }
                 });
     }

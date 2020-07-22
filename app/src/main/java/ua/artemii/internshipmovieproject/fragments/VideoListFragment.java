@@ -21,11 +21,12 @@ import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
 import ua.artemii.internshipmovieproject.viewmodel.VideoListInfoViewModel;
 
-public class VideoListFragment extends Fragment{
+public class VideoListFragment extends Fragment {
 
-    public static final String TAG = VideoListFragment.class.getCanonicalName();
+    private static final String TAG = VideoListFragment.class.getCanonicalName();
     private FragmentVideoListBinding videoListBinding;
     private VideoListAdapter adapter;
+    private VideoListInfoViewModel videosVM;
     /**
      * Toast for back button
      */
@@ -38,13 +39,13 @@ public class VideoListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new ViewModelProvider(this)
-                .get(VideoListInfoViewModel.class)
-                .getVideos("Women")
-                .observe(this, shortDescVideos -> {
-                    adapter.setVideoListInfoModelList(shortDescVideos);
-                    adapter.notifyDataSetChanged();
-                });
+        videosVM = new ViewModelProvider(this).get(VideoListInfoViewModel.class);
+
+        updateVideoList();
+        updateDownloadState();
+
+        videosVM.loadVideoList("House");
+
         addCustomBackNavigation();
     }
 
@@ -87,7 +88,9 @@ public class VideoListFragment extends Fragment{
                     Log.d(TAG, "Зашли в backPressedTime + 2000 > System.currentTimeMillis()");
                     backToast.cancel();
                     this.remove();
-                    getActivity().onBackPressed();
+                    if (getActivity() != null) {
+                        getActivity().onBackPressed();
+                    }
                     return;
                 } else {
                     Log.d(TAG, "Зашли в else");
@@ -100,6 +103,22 @@ public class VideoListFragment extends Fragment{
         requireActivity()
                 .getOnBackPressedDispatcher()
                 .addCallback(this, callback);
+    }
+
+    private void updateVideoList() {
+        videosVM.getVideos().observe(this, videoList -> {
+            adapter.setVideoListInfoModelList(videoList);
+            adapter.notifyDataSetChanged();
+        });
+    }
+
+    private void updateDownloadState() {
+        videosVM.getThrowable().observe(this, throwable -> {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Download error", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Download error: ", throwable);
+            }
+        });
     }
 
 }

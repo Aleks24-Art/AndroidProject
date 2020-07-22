@@ -1,6 +1,5 @@
 package ua.artemii.internshipmovieproject.adapter;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +22,8 @@ import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
-    private ItemVideoBinding itemBinding;
     private List<VideoListInfoModel> videoListInfoModelList;
-    public static final String TAG = VideoListFragment.class.getCanonicalName();
-    Context context;
+    private static final String TAG = VideoListFragment.class.getCanonicalName();
 
     public VideoListAdapter(List<VideoListInfoModel> videoListInfoModelList) {
         this.videoListInfoModelList = videoListInfoModelList;
@@ -41,11 +38,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     @NonNull
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-
-        itemBinding =
+        ItemVideoBinding itemBinding =
                 ItemVideoBinding.inflate(inflater, parent, false);
 
 
@@ -62,7 +57,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(holder.itemBinding.icVideoPoster);
 
-
         holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
         holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith("–") ?
                 videoListInfoModelList.get(position).getYear() + "nowadays" : videoListInfoModelList.get(position).getYear());
@@ -77,7 +71,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         ItemVideoBinding itemBinding;
 
-        public VideoViewHolder(@NonNull ItemVideoBinding itemBinding) {
+        VideoViewHolder(@NonNull ItemVideoBinding itemBinding) {
             super(itemBinding.getRoot());
             itemView.setOnClickListener(this);
             this.itemBinding = itemBinding;

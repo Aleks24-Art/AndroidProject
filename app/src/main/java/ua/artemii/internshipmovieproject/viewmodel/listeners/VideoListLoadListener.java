@@ -6,4 +6,5 @@ import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 
 public interface VideoListLoadListener {
     void videoListDataLoad(List<VideoListInfoModel> videoList);
+    void videoListDataFailed(Throwable t);
 }

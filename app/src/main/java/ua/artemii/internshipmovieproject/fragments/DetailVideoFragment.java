@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +21,20 @@ import ua.artemii.internshipmovieproject.databinding.FragmentDetailVideoInfoBind
 import ua.artemii.internshipmovieproject.viewmodel.DetailVideoInfoViewModel;
 
 public class DetailVideoFragment extends Fragment {
-    public static final String TAG =
+    private static final String TAG =
             DetailVideoFragment.class.getCanonicalName();
 
     private FragmentDetailVideoInfoBinding detailVideoInfoBinding;
+    private DetailVideoInfoViewModel videosVM;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        videosVM =
+                new ViewModelProvider(this).get(DetailVideoInfoViewModel.class);
+
+        updateDetailVideoInfo();
+        updateDownloadState();
     }
 
     @Nullable
@@ -48,15 +55,12 @@ public class DetailVideoFragment extends Fragment {
         if (getArguments() != null) {
             DetailVideoFragmentArgs args =
                     DetailVideoFragmentArgs.fromBundle(getArguments());
-            updateDetailVideoInfo(args.getImdbID());
+            videosVM.loadDetailVideoInfo(args.getImdbID(), "full");
         }
     }
 
-    private void updateDetailVideoInfo(String imdbID) {
-        new ViewModelProvider(this)
-                .get(DetailVideoInfoViewModel.class)
-                .getDetailVideoInfo(imdbID, "full")
-                .observe(getViewLifecycleOwner(), detailVideoInfo -> {
+    private void updateDetailVideoInfo() {
+        videosVM.getVideos().observe(this, detailVideoInfo -> {
                     loadBigPoster(detailVideoInfo.getPosterUrl());
                     detailVideoInfoBinding.bigTitle.setText(detailVideoInfo.getTitle());
                     detailVideoInfoBinding.releasedInfo.setText((detailVideoInfo.getReleased()));
@@ -65,24 +69,33 @@ public class DetailVideoFragment extends Fragment {
                     detailVideoInfoBinding.genreInfo.setText(detailVideoInfo.getGenre());
                     detailVideoInfoBinding.runtimeInfo.setText(detailVideoInfo.getRuntime());
                     detailVideoInfoBinding.typeInfo.setText(detailVideoInfo.getType());
-                    detailVideoInfoBinding.btnToVideoDescription.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DetailVideoFragmentDirections.ActionDetailVideoInfoFragmentToDescriptionVideoFragment action =
-                                    DetailVideoFragmentDirections.actionDetailVideoInfoFragmentToDescriptionVideoFragment(detailVideoInfo.getPlot());
-                            Navigation.findNavController(v).navigate(action);
-                        }
+
+                    detailVideoInfoBinding.btnToVideoDescription.setOnClickListener(v -> {
+                        DetailVideoFragmentDirections.ActionDetailVideoInfoFragmentToDescriptionVideoFragment action =
+                                DetailVideoFragmentDirections.actionDetailVideoInfoFragmentToDescriptionVideoFragment(detailVideoInfo.getPlot());
+                        Navigation.findNavController(v).navigate(action);
                     });
                 });
     }
 
+    private void updateDownloadState() {
+        videosVM.getThrowable().observe(this, throwable -> {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Download error", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Download error: ", throwable);
+            }
+        });
+    }
+
     private void loadBigPoster(String posterUrl) {
         Log.d(TAG, "LoadBigPoster!!!");
-        Glide.with(getContext())
-                .asBitmap()
-                .load(posterUrl)
-                .error(R.drawable.img_poster_default)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .into(detailVideoInfoBinding.icVideoPosterBig);
+        if (getContext() != null) {
+            Glide.with(getContext())
+                    .asBitmap()
+                    .load(posterUrl)
+                    .error(R.drawable.img_poster_default)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(detailVideoInfoBinding.icVideoPosterBig);
+        }
     }
 }
