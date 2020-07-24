@@ -120,5 +120,4 @@ public class VideoListFragment extends Fragment {
             }
         });
     }
-
 }

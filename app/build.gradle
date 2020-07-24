@@ -76,4 +76,7 @@ dependencies {
     // Saved state module for ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.6'
+
 }
