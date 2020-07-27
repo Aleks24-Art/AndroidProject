@@ -35,24 +35,15 @@ public class MainActivity extends AppCompatActivity {
         Navigation.findNavController(this, R.id.video_list_nav_host_fragment);
     }
 
-
     private void makeAppFullScreen() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+                                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
     }
-
 
     @Override
     protected void onStop() {
         super.onStop();
         SimpleExoPlayerService.getInstance().getPlayer().setPlayWhenReady(false);
     }
-
-    /*@Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SimpleExoPlayerService.releasePlayer();
-    }*/
 }

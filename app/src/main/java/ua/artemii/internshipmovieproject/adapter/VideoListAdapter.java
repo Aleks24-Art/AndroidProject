@@ -80,9 +80,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         @Override
         public void onClick(View v) {
-            //DetailVideoFragment.zeroingCurrentPosition();
             //Navigate from videoListFragment to detailVideoInfoFragment
-            SimpleExoPlayerService.zeroingPlayerPosition();
+            SimpleExoPlayerService.getInstance().zeroingPlayerPosition();
+            SimpleExoPlayerService.getInstance().setStarted(false);
             VideoListFragmentDirections.ActionVideoListFragmentToDetailVideoInfoFragment action =
                     VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(videoListInfoModelList.get(getAdapterPosition()).getImdbID());
             Navigation.findNavController(v).navigate(action);

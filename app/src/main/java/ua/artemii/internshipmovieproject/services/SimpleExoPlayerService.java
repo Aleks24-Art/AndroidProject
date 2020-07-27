@@ -16,10 +16,11 @@ public class SimpleExoPlayerService {
     private static SimpleExoPlayerService instance;
     private static Context context;
     private static SimpleExoPlayer player;
-    private static long currentPlayerPosition;
+    private long currentPlayerPosition;
     private static HlsMediaSource hlsMediaSource;
     private static final String VIDEO_URI =
             "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+    private boolean started;
 
     private SimpleExoPlayerService() {
         Log.i(TAG, "SimpleExoPlayerService constructor is called");
@@ -57,7 +58,6 @@ public class SimpleExoPlayerService {
 
     public static void releasePlayer() {
         if (player != null) {
-            currentPlayerPosition = player.getCurrentPosition();
             player.release();
             //player = null;
             //hlsMediaSource = null;
@@ -65,18 +65,23 @@ public class SimpleExoPlayerService {
     }
 
     public void updateCurrentPlayerPosition() {
+        Log.d(TAG, "updateCurrentPlayerPosition: " +  player.getCurrentPosition());
         currentPlayerPosition = player.getCurrentPosition();
-    }
-
-    public long getCurrentPlayerPosition() {
-        return currentPlayerPosition;
     }
 
     public static void setContext(Context c) {
         context = c;
     }
 
-    public static void zeroingPlayerPosition() {
+    public void zeroingPlayerPosition() {
         currentPlayerPosition = 0;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 }

@@ -63,16 +63,9 @@ public class VideoListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        SimpleExoPlayerService.getInstance().getPlayer().stop();
-        //Toast.makeText(getContext(), "Pause", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
-        SimpleExoPlayerService.zeroingPlayerPosition();
+        SimpleExoPlayerService.getInstance().zeroingPlayerPosition();
     }
 
     private void initVideoRecyclerView() {

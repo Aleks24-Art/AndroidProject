@@ -40,7 +40,6 @@ public class DetailVideoFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         videosVM =
                 new ViewModelProvider(this).get(DetailVideoInfoViewModel.class);
 
@@ -89,9 +88,17 @@ public class DetailVideoFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        SimpleExoPlayerService.getInstance().getPlayer().stop();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        playerService.updateCurrentPlayerPosition();
+        if (SimpleExoPlayerService.getInstance().isStarted()) {
+            playerService.updateCurrentPlayerPosition();
+        }
         playerView.setPlayer(null);
     }
 
@@ -115,7 +122,6 @@ public class DetailVideoFragment extends Fragment {
         });
     }
 
-    //ok
     private void updateDownloadState() {
         videosVM.getThrowable().observe(this, throwable -> {
             if (getContext() != null) {
@@ -124,7 +130,7 @@ public class DetailVideoFragment extends Fragment {
             }
         });
     }
-    //ok
+
     private void loadBigPoster(String posterUrl) {
         Log.d(TAG, "LoadBigPoster!!!");
         if (getContext() != null) {
@@ -136,10 +142,11 @@ public class DetailVideoFragment extends Fragment {
                     .into(detailVideoInfoBinding.icVideoPosterBig);
         }
     }
-    //ok
+
     @SuppressLint("SetTextI18n")
     private void initPlayer() {
 
+        //Adding player listener
         playerService.getPlayer().addListener(new Player.EventListener() {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -158,31 +165,37 @@ public class DetailVideoFragment extends Fragment {
 
         // Setting action on play button
         detailVideoInfoBinding.playVideo.setOnClickListener(v -> {
+            if (playerService.isStarted()) {
+                playerService.updateCurrentPlayerPosition();
+            }
             // Set current pos before pause/play, to continue from it
             if (playerService.getPlayer().isPlaying()) {
-                playerService.updateCurrentPlayerPosition();
                 // Set stop action on btn, if we have already started video
                 detailVideoInfoBinding.playVideo.setText("Play");
                 playerService.getPlayer().stop();
+                //playerService.setStarted(false);
             } else {
-                if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.getCurrentPlayerPosition() == 0) {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     playVideoLandscape();
-                } else  {
+                    playerService.setStarted(true);
+                } else {
                     // Continue or start playing video
                     detailVideoInfoBinding.playVideo.setText("Pause");
                     playVideoPortrait();
+                    playerService.setStarted(true);
                 }
             }
         });
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.getCurrentPlayerPosition() != 0) {
+
+        //
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.isStarted()) {
             playVideoLandscape();
         }
-        if (orientation == Configuration.ORIENTATION_PORTRAIT && playerService.getCurrentPlayerPosition() != 0) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT && playerService.isStarted()) {
             playVideoPortrait();
         }
     }
 
-    //ok
     private void playVideoPortrait() {
         // Set some settings to have a correct view
         detailVideoInfoBinding.icVideoPosterBig.setVisibility(View.INVISIBLE);
@@ -190,7 +203,7 @@ public class DetailVideoFragment extends Fragment {
         //Starting video from last checked pos
         playerService.preparePlayer();
     }
-    //ok
+
     private void playVideoLandscape() {
         // Set some settings to have a correct view
         detailVideoInfoBinding.svVideoInfo.setVisibility(View.INVISIBLE);
