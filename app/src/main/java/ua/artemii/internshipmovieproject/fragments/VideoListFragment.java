@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
+import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 import ua.artemii.internshipmovieproject.viewmodel.VideoListInfoViewModel;
 
 public class VideoListFragment extends Fragment {
@@ -59,6 +60,19 @@ public class VideoListFragment extends Fragment {
                 FragmentVideoListBinding.inflate(inflater, container, false);
         initVideoRecyclerView();
         return videoListBinding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SimpleExoPlayerService.getInstance().getPlayer().stop();
+        //Toast.makeText(getContext(), "Pause", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SimpleExoPlayerService.zeroingPlayerPosition();
     }
 
     private void initVideoRecyclerView() {

@@ -1,7 +1,7 @@
 package ua.artemii.internshipmovieproject.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,38 +17,44 @@ import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.FragmentDetailVideoInfoBinding;
+import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 import ua.artemii.internshipmovieproject.viewmodel.DetailVideoInfoViewModel;
 
 public class DetailVideoFragment extends Fragment {
+
     private static final String TAG =
             DetailVideoFragment.class.getCanonicalName();
-    private static final String PLOT_TYPE = "full";
 
+    private static final String PLOT_TYPE = "full";
     private FragmentDetailVideoInfoBinding detailVideoInfoBinding;
     private DetailVideoInfoViewModel videosVM;
     private PlayerView playerView;
-    private SimpleExoPlayer player;
-    private HlsMediaSource hlsMediaSource;
-    private static final String VIDEO_URI = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
-    public static long currentPlayerPosition = 0;
+    private SimpleExoPlayerService playerService;
+    private int orientation;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         videosVM =
                 new ViewModelProvider(this).get(DetailVideoInfoViewModel.class);
 
+        // Create a player instance.
+        playerService = SimpleExoPlayerService.getInstance();
+
         updateDetailVideoInfo();
         updateDownloadState();
+
+        if (getArguments() != null) {
+            DetailVideoFragmentArgs args =
+                    DetailVideoFragmentArgs.fromBundle(getArguments());
+            videosVM.loadDetailVideoInfo(args.getImdbID(), PLOT_TYPE);
+        }
     }
 
     @Nullable
@@ -59,10 +64,13 @@ public class DetailVideoFragment extends Fragment {
             return detailVideoInfoBinding.getRoot();
         }
         detailVideoInfoBinding =
-                FragmentDetailVideoInfoBinding.inflate(inflater, container, false);
+                FragmentDetailVideoInfoBinding
+                        .inflate(inflater, container, false);
+
+        // Orientation initialize
+        orientation = getResources().getConfiguration().orientation;
 
         // Player view initialize
-        int orientation = getResources().getConfiguration().orientation;
         playerView =
                 orientation == Configuration.ORIENTATION_LANDSCAPE
                         ? detailVideoInfoBinding.playerViewLandscape : detailVideoInfoBinding.playerViewPortrait;
@@ -71,21 +79,10 @@ public class DetailVideoFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (getArguments() != null) {
-            DetailVideoFragmentArgs args =
-                    DetailVideoFragmentArgs.fromBundle(getArguments());
-            videosVM.loadDetailVideoInfo(args.getImdbID(), PLOT_TYPE);
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         if (getContext() != null) {
             initPlayer();
-            startPlayer();
         } else {
             Log.e(TAG, "Context is null");
         }
@@ -94,13 +91,8 @@ public class DetailVideoFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (player.isPlaying()) {
-            currentPlayerPosition = player.getCurrentPosition();
-        }
+        playerService.updateCurrentPlayerPosition();
         playerView.setPlayer(null);
-        player.release();
-        player = null;
-        hlsMediaSource = null;
     }
 
     private void updateDetailVideoInfo() {
@@ -115,6 +107,7 @@ public class DetailVideoFragment extends Fragment {
             detailVideoInfoBinding.typeInfo.setText(detailVideoInfo.getType());
 
             detailVideoInfoBinding.btnToVideoDescription.setOnClickListener(v -> {
+                playerService.getPlayer().setPlayWhenReady(false);
                 DetailVideoFragmentDirections.ActionDetailVideoInfoFragmentToDescriptionVideoFragment action =
                         DetailVideoFragmentDirections.actionDetailVideoInfoFragmentToDescriptionVideoFragment(detailVideoInfo.getPlot());
                 Navigation.findNavController(v).navigate(action);
@@ -122,6 +115,7 @@ public class DetailVideoFragment extends Fragment {
         });
     }
 
+    //ok
     private void updateDownloadState() {
         videosVM.getThrowable().observe(this, throwable -> {
             if (getContext() != null) {
@@ -130,7 +124,7 @@ public class DetailVideoFragment extends Fragment {
             }
         });
     }
-
+    //ok
     private void loadBigPoster(String posterUrl) {
         Log.d(TAG, "LoadBigPoster!!!");
         if (getContext() != null) {
@@ -142,78 +136,66 @@ public class DetailVideoFragment extends Fragment {
                     .into(detailVideoInfoBinding.icVideoPosterBig);
         }
     }
+    //ok
+    @SuppressLint("SetTextI18n")
+    private void initPlayer() {
 
+        playerService.getPlayer().addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playbackState == Player.STATE_ENDED) {
+                    detailVideoInfoBinding.icVideoPosterBig.setVisibility(View.VISIBLE);
+                    playerView.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        //Set player on player view
+        playerView.setPlayer(playerService.getPlayer());
+
+        //Make playerView invisible to see a picture
+        playerView.setVisibility(View.INVISIBLE);
+
+        // Setting action on play button
+        detailVideoInfoBinding.playVideo.setOnClickListener(v -> {
+            // Set current pos before pause/play, to continue from it
+            if (playerService.getPlayer().isPlaying()) {
+                playerService.updateCurrentPlayerPosition();
+                // Set stop action on btn, if we have already started video
+                detailVideoInfoBinding.playVideo.setText("Play");
+                playerService.getPlayer().stop();
+            } else {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.getCurrentPlayerPosition() == 0) {
+                    playVideoLandscape();
+                } else  {
+                    // Continue or start playing video
+                    detailVideoInfoBinding.playVideo.setText("Pause");
+                    playVideoPortrait();
+                }
+            }
+        });
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.getCurrentPlayerPosition() != 0) {
+            playVideoLandscape();
+        }
+        if (orientation == Configuration.ORIENTATION_PORTRAIT && playerService.getCurrentPlayerPosition() != 0) {
+            playVideoPortrait();
+        }
+    }
+
+    //ok
     private void playVideoPortrait() {
         // Set some settings to have a correct view
         detailVideoInfoBinding.icVideoPosterBig.setVisibility(View.INVISIBLE);
         playerView.setVisibility(View.VISIBLE);
         //Starting video from last checked pos
-        player.seekTo(currentPlayerPosition);
-        player.prepare(hlsMediaSource, false, false);
-        player.setPlayWhenReady(true);
+        playerService.preparePlayer();
     }
-
+    //ok
     private void playVideoLandscape() {
         // Set some settings to have a correct view
         detailVideoInfoBinding.svVideoInfo.setVisibility(View.INVISIBLE);
         playerView.setVisibility(View.VISIBLE);
         //Starting video from last checked pos
-        player.seekTo(currentPlayerPosition);
-        player.prepare(hlsMediaSource, false, false);
-        player.setPlayWhenReady(true);
+        playerService.preparePlayer();
     }
-
-    private void stopVideo() {
-        // Set current pos before stop, to continue from it
-        currentPlayerPosition = player.getCurrentPosition();
-        player.stop();
-    }
-
-    private void initPlayer() {
-        // Create a player instance.
-        player = new SimpleExoPlayer.Builder(getContext()).build();
-
-        //Set player on player view
-        playerView.setPlayer(player);
-
-        //Make playerView invisible to see a picture
-        playerView.setVisibility(View.INVISIBLE);
-
-        // Create a data source factory.
-        DataSource.Factory dataSourceFactory =
-                new DefaultHttpDataSourceFactory(
-                        Util.getUserAgent(getContext(), "app-name"));
-
-        // Create a HLS media source pointing to a playlist uri.
-        hlsMediaSource =
-                new HlsMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(VIDEO_URI));
-
-        // Setting action on play button
-        detailVideoInfoBinding.playVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "Playing is : " + player.isPlaying());
-                if (player.isPlaying()) {
-                    // Set stop action on btn, if we have already started video
-                    stopVideo();
-                } else {
-                    // Continue or start playing video
-                    playVideoPortrait();
-                }
-            }
-        });
-    }
-
-    private void startPlayer() {
-        // Get current orientation and play video depending on it
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE && currentPlayerPosition != 0) {
-            playVideoLandscape();
-        }
-        if (orientation == Configuration.ORIENTATION_PORTRAIT && currentPlayerPosition != 0) {
-            playVideoPortrait();
-        }
-    }
-
 }

@@ -19,6 +19,7 @@ import ua.artemii.internshipmovieproject.databinding.ItemVideoBinding;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
+import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
@@ -79,7 +80,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         @Override
         public void onClick(View v) {
+            //DetailVideoFragment.zeroingCurrentPosition();
             //Navigate from videoListFragment to detailVideoInfoFragment
+            SimpleExoPlayerService.zeroingPlayerPosition();
             VideoListFragmentDirections.ActionVideoListFragmentToDetailVideoInfoFragment action =
                     VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(videoListInfoModelList.get(getAdapterPosition()).getImdbID());
             Navigation.findNavController(v).navigate(action);

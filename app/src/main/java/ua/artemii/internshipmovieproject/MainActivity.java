@@ -1,5 +1,6 @@
 package ua.artemii.internshipmovieproject;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -7,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.Navigation;
 
 import ua.artemii.internshipmovieproject.databinding.ActivityMainBinding;
+import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
 public class MainActivity extends AppCompatActivity {
     /**
      * ViewBinding for MainActivity
      */
     private ActivityMainBinding binding;
+    private static Context context;
 
     /**
      * Default class TAG
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         binding
                 = ActivityMainBinding.inflate(getLayoutInflater());
 
+        context = getApplicationContext();
+
         setContentView(binding.getRoot());
         Navigation.findNavController(this, R.id.video_list_nav_host_fragment);
     }
@@ -37,4 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SimpleExoPlayerService.getInstance().getPlayer().setPlayWhenReady(false);
+    }
+
+    /*@Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SimpleExoPlayerService.releasePlayer();
+    }*/
 }
