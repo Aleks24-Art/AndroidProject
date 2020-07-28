@@ -15,8 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
@@ -45,7 +43,7 @@ public class VideoListFragment extends Fragment {
         updateVideoList();
         updateDownloadState();
 
-        videosVM.loadVideoList("House");
+        videosVM.loadVideoList("Football");
 
         addCustomBackNavigation();
     }
@@ -79,8 +77,7 @@ public class VideoListFragment extends Fragment {
             recyclerView.setHasFixedSize(false);
             recyclerView.setLayoutManager(layoutManager);
 
-            adapter =
-                    new VideoListAdapter(new ArrayList<>());
+            adapter = new VideoListAdapter();
         }
 
         videoListBinding.rvVideo.setAdapter(adapter);
@@ -113,10 +110,8 @@ public class VideoListFragment extends Fragment {
     }
 
     private void updateVideoList() {
-        videosVM.getVideos().observe(this, videoList -> {
-            adapter.setVideoListInfoModelList(videoList);
-            adapter.notifyDataSetChanged();
-        });
+        videosVM.getVideos().observe(this,
+                videoList -> adapter.setVideoListInfoModelList(videoList));
     }
 
     private void updateDownloadState() {

@@ -1,20 +1,23 @@
 package ua.artemii.internshipmovieproject.services;
 
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VideoLoadService {
 
     private static VideoLoadService instance;
     private static final String BASE_URL = "http://www.omdbapi.com/";
-
-    private Retrofit retrofit;
+    private VideoItemService service;
 
     private VideoLoadService() {
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+
+        service = retrofit.create(VideoItemService.class);
     }
 
     public static VideoLoadService getInstance() {
@@ -24,9 +27,7 @@ public class VideoLoadService {
         return instance;
     }
 
-    public VideoItemService getVideoItemService() {
-        return retrofit.create(VideoItemService.class);
+    public VideoItemService getService() {
+        return service;
     }
-
-
 }

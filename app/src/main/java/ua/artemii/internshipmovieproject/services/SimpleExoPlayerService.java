@@ -10,44 +10,41 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import ua.artemii.internshipmovieproject.values.StringValues;
+
 public class SimpleExoPlayerService {
 
     private static final String TAG = SimpleExoPlayerService.class.getCanonicalName();
     private static SimpleExoPlayerService instance;
-    private static Context context;
-    private static SimpleExoPlayer player;
-    private long currentPlayerPosition;
-    private static HlsMediaSource hlsMediaSource;
     private static final String VIDEO_URI =
             "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+    private HlsMediaSource hlsMediaSource;
+    private SimpleExoPlayer player;
+    private long currentPlayerPosition;
     private boolean started;
-
-    private SimpleExoPlayerService() {
-        Log.i(TAG, "SimpleExoPlayerService constructor is called");
-        player = new SimpleExoPlayer.Builder(context).build();
-        Log.i(TAG, "SimpleExoPlayer " + player);
-
-        // Create a data source factory.
-        DataSource.Factory dataSourceFactory =
-                new DefaultHttpDataSourceFactory(
-                        Util.getUserAgent(context, "app-name"));
-
-        // Create a HLS media source pointing to a playlist uri.
-        hlsMediaSource =
-                new HlsMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(VIDEO_URI));
-    }
 
     public static SimpleExoPlayerService getInstance() {
         if (instance == null) {
             instance = new SimpleExoPlayerService();
         }
-
         return instance;
     }
 
     public SimpleExoPlayer getPlayer() {
         return player;
+    }
+
+    public void initPlayer(Context context) {
+        player = new SimpleExoPlayer.Builder(context).build();
+
+        DataSource.Factory dataSourceFactory =
+                new DefaultHttpDataSourceFactory(
+                        Util.getUserAgent(context, StringValues.APP_NAME));
+
+        hlsMediaSource =
+                new HlsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(Uri.parse(VIDEO_URI));
+
     }
 
     public void preparePlayer() {
@@ -56,21 +53,17 @@ public class SimpleExoPlayerService {
         player.setPlayWhenReady(true);
     }
 
-    public static void releasePlayer() {
+  /*  public void releasePlayer() {
         if (player != null) {
             player.release();
-            //player = null;
-            //hlsMediaSource = null;
+            player = null;
+            hlsMediaSource = null;
         }
-    }
+    }*/
 
     public void updateCurrentPlayerPosition() {
-        Log.d(TAG, "updateCurrentPlayerPosition: " +  player.getCurrentPosition());
+        Log.d(TAG, "CurrentPlayerPosition: " +  player.getCurrentPosition());
         currentPlayerPosition = player.getCurrentPosition();
-    }
-
-    public static void setContext(Context c) {
-        context = c;
     }
 
     public void zeroingPlayerPosition() {

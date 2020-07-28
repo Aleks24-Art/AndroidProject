@@ -9,11 +9,11 @@ public class Search {
     @SerializedName("Search")
     private List<VideoListInfoModel> videoListInfoModelList;
 
-    public Search(List<VideoListInfoModel> videoListInfoModelList) {
-        this.videoListInfoModelList = videoListInfoModelList;
-    }
-
     public List<VideoListInfoModel> getVideoListInfoModelList() {
         return videoListInfoModelList;
+    }
+
+    public void setVideoListInfoModelList(List<VideoListInfoModel> videoListInfoModelList) {
+        this.videoListInfoModelList = videoListInfoModelList;
     }
 }

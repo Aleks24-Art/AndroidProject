@@ -1,6 +1,5 @@
 package ua.artemii.internshipmovieproject.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +22,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.FragmentDetailVideoInfoBinding;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.values.StringValues;
 import ua.artemii.internshipmovieproject.viewmodel.DetailVideoInfoViewModel;
 
 public class DetailVideoFragment extends Fragment {
@@ -30,7 +30,6 @@ public class DetailVideoFragment extends Fragment {
     private static final String TAG =
             DetailVideoFragment.class.getCanonicalName();
 
-    private static final String PLOT_TYPE = "full";
     private FragmentDetailVideoInfoBinding detailVideoInfoBinding;
     private DetailVideoInfoViewModel videosVM;
     private PlayerView playerView;
@@ -41,9 +40,9 @@ public class DetailVideoFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videosVM =
-                new ViewModelProvider(this).get(DetailVideoInfoViewModel.class);
+                new ViewModelProvider(this)
+                            .get(DetailVideoInfoViewModel.class);
 
-        // Create a player instance.
         playerService = SimpleExoPlayerService.getInstance();
 
         updateDetailVideoInfo();
@@ -52,7 +51,7 @@ public class DetailVideoFragment extends Fragment {
         if (getArguments() != null) {
             DetailVideoFragmentArgs args =
                     DetailVideoFragmentArgs.fromBundle(getArguments());
-            videosVM.loadDetailVideoInfo(args.getImdbID(), PLOT_TYPE);
+            videosVM.loadDetailVideoInfo(args.getImdbID(), StringValues.PLOT_TYPE);
         }
     }
 
@@ -143,9 +142,7 @@ public class DetailVideoFragment extends Fragment {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private void initPlayer() {
-
         //Adding player listener
         playerService.getPlayer().addListener(new Player.EventListener() {
             @Override
@@ -171,7 +168,7 @@ public class DetailVideoFragment extends Fragment {
             // Set current pos before pause/play, to continue from it
             if (playerService.getPlayer().isPlaying()) {
                 // Set stop action on btn, if we have already started video
-                detailVideoInfoBinding.playVideo.setText("Play");
+                detailVideoInfoBinding.playVideo.setText(StringValues.PLAY);
                 playerService.getPlayer().stop();
                 //playerService.setStarted(false);
             } else {
@@ -180,14 +177,13 @@ public class DetailVideoFragment extends Fragment {
                     playerService.setStarted(true);
                 } else {
                     // Continue or start playing video
-                    detailVideoInfoBinding.playVideo.setText("Pause");
+                    detailVideoInfoBinding.playVideo.setText(StringValues.PAUSE);
                     playVideoPortrait();
                     playerService.setStarted(true);
                 }
             }
         });
 
-        //
         if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.isStarted()) {
             playVideoLandscape();
         }

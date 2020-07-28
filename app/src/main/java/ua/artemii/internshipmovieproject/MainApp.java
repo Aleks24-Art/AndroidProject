@@ -4,10 +4,10 @@ import android.app.Application;
 
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
-public class VideoApp extends Application {
+public class MainApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SimpleExoPlayerService.setContext(getApplicationContext());
+        SimpleExoPlayerService.getInstance().initPlayer(getApplicationContext());
     }
 }

@@ -2,11 +2,10 @@ package ua.artemii.internshipmovieproject.repository;
 
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.services.VideoLoadService;
@@ -17,8 +16,11 @@ public class VideoRepository {
 
     private static final String TAG = VideoRepository.class.getCanonicalName();
     private static VideoRepository instance;
+    private VideoLoadService service;
 
-    private VideoRepository() {}
+    private VideoRepository() {
+        service =  VideoLoadService.getInstance();
+    }
 
     public static VideoRepository getInstance() {
         if (instance == null) {
@@ -29,46 +31,60 @@ public class VideoRepository {
 
     public void loadDetailVideoInfo(String id, String plot, DetailVideoInfoLoadListener listener) {
         Log.i(TAG, "Starting downloading data for detail video fragment");
-        VideoLoadService.getInstance()
-                .getVideoItemService()
+                service.getService()
                 .getDetailVideoInfo(id, plot)
-                .enqueue(new Callback<DetailVideoInfoModel>() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<DetailVideoInfoModel>() {
+                    DetailVideoInfoModel videoInfo;
                     @Override
-                    public void onResponse(@NotNull Call<DetailVideoInfoModel> call, @NotNull Response<DetailVideoInfoModel> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            listener.detailVideoDataLoad(response.body());
-                        } else {
-                            listener.detailVideoDataFailed(new Throwable("Request failed"));
-                        }
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<DetailVideoInfoModel> call, @NotNull Throwable t) {
-                        Log.e(TAG, "Request failed " + t);
-                        listener.detailVideoDataFailed(t);
+                    public void onNext(DetailVideoInfoModel value) {
+                        videoInfo = value;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.detailVideoDataFailed(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        listener.detailVideoDataLoad(videoInfo);
                     }
                 });
     }
 
     public void loadVideoListInfo(String keyWord, VideoListLoadListener listener) {
-        Log.i(TAG, "Starting downloading data for video list fragment");
-        VideoLoadService.getInstance()
-                .getVideoItemService()
-                .getVideoListInfo(keyWord)
-                .enqueue(new Callback<Search>() {
-                    @Override
-                    public void onResponse(@NotNull Call<Search> call, @NotNull Response<Search> response) {
-                        if (response.isSuccessful() && response.body()  != null && response.body().getVideoListInfoModelList().size() > 0) {
-                            listener.videoListDataLoad(response.body().getVideoListInfoModelList());
-                        } else {
-                            listener.videoListDataFailed(new Throwable("Request failed"));
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(@NotNull Call<Search> call, @NotNull Throwable t) {
-                        listener.videoListDataFailed(t);
-                    }
-                });
+        service.getService().getVideoListInfo(keyWord)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Search>() {
+                    Search search = new Search();
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Search value) {
+                search = value;
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                listener.videoListDataFailed(e);
+            }
+
+            @Override
+            public void onComplete() {
+                listener.videoListDataLoad(search.getVideoListInfoModelList());
+            }
+        });
     }
 }

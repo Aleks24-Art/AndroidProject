@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.Collections;
 import java.util.List;
 
 import ua.artemii.internshipmovieproject.R;
@@ -20,20 +21,16 @@ import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.values.StringValues;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
-    private List<VideoListInfoModel> videoListInfoModelList;
     private static final String TAG = VideoListFragment.class.getCanonicalName();
-
-    public VideoListAdapter(List<VideoListInfoModel> videoListInfoModelList) {
-        this.videoListInfoModelList = videoListInfoModelList;
-        notifyDataSetChanged();
-        Log.d(TAG, "URL = " + this.videoListInfoModelList);
-    }
+    private List<VideoListInfoModel> videoListInfoModelList = Collections.emptyList();
 
     public void setVideoListInfoModelList(List<VideoListInfoModel> videoListInfoModelList) {
         this.videoListInfoModelList = videoListInfoModelList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -43,7 +40,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         ItemVideoBinding itemBinding =
                 ItemVideoBinding.inflate(inflater, parent, false);
-
 
         return new VideoViewHolder(itemBinding);
     }
@@ -59,8 +55,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 .into(holder.itemBinding.icVideoPoster);
 
         holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
-        holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith("–") ?
-                videoListInfoModelList.get(position).getYear() + "nowadays" : videoListInfoModelList.get(position).getYear());
+        holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith(StringValues.STILL_GOING)
+                ? videoListInfoModelList.get(position).getYear() + StringValues.NOW
+                : videoListInfoModelList.get(position).getYear());
     }
 
     @Override
@@ -83,8 +80,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             //Navigate from videoListFragment to detailVideoInfoFragment
             SimpleExoPlayerService.getInstance().zeroingPlayerPosition();
             SimpleExoPlayerService.getInstance().setStarted(false);
+
             VideoListFragmentDirections.ActionVideoListFragmentToDetailVideoInfoFragment action =
-                    VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(videoListInfoModelList.get(getAdapterPosition()).getImdbID());
+                            VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(
+                                            videoListInfoModelList.get(getAdapterPosition()).getImdbID());
             Navigation.findNavController(v).navigate(action);
         }
     }

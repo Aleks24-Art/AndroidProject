@@ -26,7 +26,6 @@ public class DescriptionVideoFragment extends Fragment {
                     DescriptionVideoFragmentArgs.fromBundle(getArguments());
             fullPlot = args.getFullPlot();
         }
-
     }
 
     @Nullable
