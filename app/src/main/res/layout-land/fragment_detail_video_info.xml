@@ -12,7 +12,8 @@
         android:id="@+id/player_view_landscape"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:resize_mode="fill"/>
+        app:resize_mode="fill"
+        app:use_controller="false"/>
 
     <ScrollView
         android:id="@+id/sv_video_info"

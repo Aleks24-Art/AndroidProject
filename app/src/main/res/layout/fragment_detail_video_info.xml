@@ -41,7 +41,8 @@
                 <com.google.android.exoplayer2.ui.PlayerView
                     android:id="@+id/player_view_portrait"
                     android:layout_width="match_parent"
-                    android:layout_height="437dp" />
+                    android:layout_height="437dp"
+                    app:use_controller="false"/>
             </FrameLayout>
 
 
