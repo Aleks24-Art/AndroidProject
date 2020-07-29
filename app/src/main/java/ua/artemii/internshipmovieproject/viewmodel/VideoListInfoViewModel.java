@@ -34,26 +34,26 @@ public class VideoListInfoViewModel extends ViewModel {
             Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
             VideoRepository.getInstance()
                     .loadVideoListInfo(keyWord)
-                    .subscribe(new Observer<Search>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-                    DisposableService.add(d);
-                }
+                    .subscribe(new Observer<List<VideoListInfoModel>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            DisposableService.add(d);
+                        }
 
-                @Override
-                public void onNext(Search search) {
-                   videos.setValue(search.getVideoListInfoModelList());
-                }
+                        @Override
+                        public void onNext(List<VideoListInfoModel> videoList) {
+                            videos.setValue(videoList);
+                        }
 
-                @Override
-                public void onError(Throwable t) {
-                    throwable.setValue(t);
-                }
+                        @Override
+                        public void onError(Throwable t) {
+                            throwable.setValue(t);
+                        }
 
-                @Override
-                public void onComplete() {
-                }
-            });
+                        @Override
+                        public void onComplete() {
+                        }
+                    });
         }
     }
 }

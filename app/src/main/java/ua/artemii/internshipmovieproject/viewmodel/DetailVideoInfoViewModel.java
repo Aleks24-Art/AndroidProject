@@ -31,26 +31,25 @@ public class DetailVideoInfoViewModel extends ViewModel {
             VideoRepository.getInstance()
                     .loadDetailVideoInfo(id, plot)
                     .subscribe(new Observer<DetailVideoInfoModel>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-                    DisposableService.add(d);
-                }
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            DisposableService.add(d);
+                        }
 
-                @Override
-                public void onNext(DetailVideoInfoModel videoInfo) {
-                    videos.setValue(videoInfo);
-                }
+                        @Override
+                        public void onNext(DetailVideoInfoModel videoInfo) {
+                            videos.setValue(videoInfo);
+                        }
 
-                @Override
-                public void onError(Throwable t) {
-                    throwable.setValue(t);
-                }
+                        @Override
+                        public void onError(Throwable t) {
+                            throwable.setValue(t);
+                        }
 
-                @Override
-                public void onComplete() {
-
-                }
-            });
+                        @Override
+                        public void onComplete() {
+                        }
+                    });
         }
     }
 }

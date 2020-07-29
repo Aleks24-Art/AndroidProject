@@ -2,11 +2,14 @@ package ua.artemii.internshipmovieproject.repository;
 
 import android.util.Log;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
+import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.services.VideoLoadService;
 
 public class VideoRepository {
@@ -16,7 +19,7 @@ public class VideoRepository {
     private VideoLoadService service;
 
     private VideoRepository() {
-        service =  VideoLoadService.getInstance();
+        service = VideoLoadService.getInstance();
     }
 
     public static VideoRepository getInstance() {
@@ -28,17 +31,18 @@ public class VideoRepository {
 
     public Observable<DetailVideoInfoModel> loadDetailVideoInfo(String id, String plot) {
         Log.i(TAG, "Starting downloading data for detail video fragment");
-               return service.getService()
+        return service.getService()
                 .getDetailVideoInfo(id, plot)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<Search> loadVideoListInfo(String keyWord) {
+    public Observable<List<VideoListInfoModel>> loadVideoListInfo(String keyWord) {
         Log.i(TAG, "Starting downloading data for video list fragment");
         return service.getService()
                 .getVideoListInfo(keyWord)
-                .subscribeOn(Schedulers.io())
+                .map(Search::getVideoListInfoModelList)
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }
