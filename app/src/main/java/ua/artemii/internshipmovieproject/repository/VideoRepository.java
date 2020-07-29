@@ -2,15 +2,12 @@ package ua.artemii.internshipmovieproject.repository;
 
 import android.util.Log;
 
-import io.reactivex.Observer;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.services.VideoLoadService;
-import ua.artemii.internshipmovieproject.viewmodel.listeners.DetailVideoInfoLoadListener;
-import ua.artemii.internshipmovieproject.viewmodel.listeners.VideoListLoadListener;
 
 public class VideoRepository {
 
@@ -29,62 +26,19 @@ public class VideoRepository {
         return instance;
     }
 
-    public void loadDetailVideoInfo(String id, String plot, DetailVideoInfoLoadListener listener) {
+    public Observable<DetailVideoInfoModel> loadDetailVideoInfo(String id, String plot) {
         Log.i(TAG, "Starting downloading data for detail video fragment");
-                service.getService()
+               return service.getService()
                 .getDetailVideoInfo(id, plot)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<DetailVideoInfoModel>() {
-                    DetailVideoInfoModel videoInfo;
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(DetailVideoInfoModel value) {
-                        videoInfo = value;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        listener.detailVideoDataFailed(e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        listener.detailVideoDataLoad(videoInfo);
-                    }
-                });
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void loadVideoListInfo(String keyWord, VideoListLoadListener listener) {
-
-        service.getService().getVideoListInfo(keyWord)
+    public Observable<Search> loadVideoListInfo(String keyWord) {
+        Log.i(TAG, "Starting downloading data for video list fragment");
+        return service.getService()
+                .getVideoListInfo(keyWord)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Search>() {
-                    Search search = new Search();
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(Search value) {
-                search = value;
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                listener.videoListDataFailed(e);
-            }
-
-            @Override
-            public void onComplete() {
-                listener.videoListDataLoad(search.getVideoListInfoModelList());
-            }
-        });
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

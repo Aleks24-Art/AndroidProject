@@ -8,14 +8,16 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
-import ua.artemii.internshipmovieproject.viewmodel.listeners.VideoListLoadListener;
+import ua.artemii.internshipmovieproject.services.DisposableService;
 
 public class VideoListInfoViewModel extends ViewModel {
 
     private static final String TAG = VideoListInfoViewModel.class.getCanonicalName();
-
     private MutableLiveData<List<VideoListInfoModel>> videos = new MutableLiveData<>();
     private MutableLiveData<Throwable> throwable = new MutableLiveData<>();
 
@@ -30,15 +32,26 @@ public class VideoListInfoViewModel extends ViewModel {
     public void loadVideoList(String keyWord) {
         if (videos.getValue() == null) {
             Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
-            VideoRepository.getInstance().loadVideoListInfo(keyWord, new VideoListLoadListener() {
+            VideoRepository.getInstance()
+                    .loadVideoListInfo(keyWord)
+                    .subscribe(new Observer<Search>() {
                 @Override
-                public void videoListDataLoad(List<VideoListInfoModel> videoList) {
-                    videos.setValue(videoList);
+                public void onSubscribe(Disposable d) {
+                    DisposableService.add(d);
                 }
 
                 @Override
-                public void videoListDataFailed(Throwable t) {
+                public void onNext(Search search) {
+                   videos.setValue(search.getVideoListInfoModelList());
+                }
+
+                @Override
+                public void onError(Throwable t) {
                     throwable.setValue(t);
+                }
+
+                @Override
+                public void onComplete() {
                 }
             });
         }

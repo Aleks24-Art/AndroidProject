@@ -1,12 +1,14 @@
 package ua.artemii.internshipmovieproject;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.Navigation;
 
 import ua.artemii.internshipmovieproject.databinding.ActivityMainBinding;
+import ua.artemii.internshipmovieproject.services.DisposableService;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,5 +37,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         SimpleExoPlayerService.getInstance().getPlayer().setPlayWhenReady(false);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DisposableService.dispose();
+        Log.d(TAG, "Dispose in onDestroy");
     }
 }

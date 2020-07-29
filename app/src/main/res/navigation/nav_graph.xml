@@ -11,10 +11,7 @@
         android:label="VideoListFragment" >
         <action
             android:id="@+id/action_videoListFragment_to_detailVideoInfoFragment"
-            app:destination="@id/detailVideoInfoFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:destination="@id/detailVideoInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailVideoInfoFragment"
@@ -22,10 +19,7 @@
         android:label="DetailVideoInfoFragment" >
         <action
             android:id="@+id/action_detailVideoInfoFragment_to_descriptionVideoFragment"
-            app:destination="@id/descriptionVideoFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:destination="@id/descriptionVideoFragment" />
         <argument
             android:name="imdbID"
             app:argType="string"
