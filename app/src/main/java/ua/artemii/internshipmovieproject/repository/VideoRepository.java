@@ -38,7 +38,7 @@ public class VideoRepository {
         return service.getService()
                 .getVideoListInfo(keyWord)
                 .map(Search::getVideoListInfoModelList)
-                .concatMap(Observable::fromIterable)
+                .flatMap(Observable::fromIterable)
                 .flatMap(videoListInfoModel ->
                         service.getService()
                                 .getDetailVideoInfo(videoListInfoModel.getImdbID(), StringValues.PLOT_TYPE)
