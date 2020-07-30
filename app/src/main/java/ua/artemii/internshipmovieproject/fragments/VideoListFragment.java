@@ -43,7 +43,7 @@ public class VideoListFragment extends Fragment {
         updateVideoList();
         updateDownloadState();
 
-        videosVM.loadVideoList("Football");
+        videosVM.loadVideoList("Women");
 
         addCustomBackNavigation();
     }

@@ -5,12 +5,13 @@ import android.util.Log;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.services.VideoLoadService;
+import ua.artemii.internshipmovieproject.values.StringValues;
 
 public class VideoRepository {
 
@@ -30,19 +31,23 @@ public class VideoRepository {
     }
 
     public Observable<DetailVideoInfoModel> loadDetailVideoInfo(String id, String plot) {
-        Log.i(TAG, "Starting downloading data for detail video fragment");
-        return service.getService()
-                .getDetailVideoInfo(id, plot)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+        return service.getService().getDetailVideoInfo(id, plot);
     }
 
-    public Observable<List<VideoListInfoModel>> loadVideoListInfo(String keyWord) {
-        Log.i(TAG, "Starting downloading data for video list fragment");
+    public Single<List<VideoListInfoModel>> loadVideoListInfo(String keyWord) {
         return service.getService()
                 .getVideoListInfo(keyWord)
                 .map(Search::getVideoListInfoModelList)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+                .concatMap(Observable::fromIterable)
+                .flatMap(videoListInfoModel ->
+                        service.getService()
+                                .getDetailVideoInfo(videoListInfoModel.getImdbID(), StringValues.PLOT_TYPE)
+                                .subscribeOn(Schedulers.io())
+                                .map(detailVideoInfoModel -> {
+                                    Log.d(TAG, "Thread — " + Thread.currentThread().getName());
+                                    videoListInfoModel.setActors(detailVideoInfoModel.getActors());
+                                    return videoListInfoModel;
+                                }))
+                .toList();
     }
 }

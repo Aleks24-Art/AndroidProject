@@ -9,8 +9,9 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import ua.artemii.internshipmovieproject.model.Search;
+import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
 import ua.artemii.internshipmovieproject.services.DisposableService;
@@ -34,26 +35,32 @@ public class VideoListInfoViewModel extends ViewModel {
             Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
             VideoRepository.getInstance()
                     .loadVideoListInfo(keyWord)
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<List<VideoListInfoModel>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            DisposableService.add(d);
-                        }
+                @Override
+                public void onSubscribe(Disposable d) {
+                    DisposableService.add(d);
+                    Log.d(TAG, "onSubscribe: " + Thread.currentThread().getName());
+                }
 
-                        @Override
-                        public void onNext(List<VideoListInfoModel> videoList) {
-                            videos.setValue(videoList);
-                        }
+                @Override
+                public void onNext(List<VideoListInfoModel> videoList) {
+                    videos.setValue(videoList);
+                    Log.d(TAG, "onNext: "  + Thread.currentThread().getName());
+                }
 
-                        @Override
-                        public void onError(Throwable t) {
-                            throwable.setValue(t);
-                        }
+                @Override
+                public void onError(Throwable t) {
+                    throwable.setValue(t);
+                }
 
-                        @Override
-                        public void onComplete() {
-                        }
-                    });
+                @Override
+                public void onComplete() {
+                    Log.d(TAG, "onComplete: " + Thread.currentThread().getName());
+                }
+            });
         }
     }
 }

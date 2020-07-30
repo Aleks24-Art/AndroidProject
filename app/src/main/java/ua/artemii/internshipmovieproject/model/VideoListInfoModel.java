@@ -14,6 +14,8 @@ public class VideoListInfoModel {
     @SerializedName("Poster")
     private String poster;
 
+    private String actors;
+
     public VideoListInfoModel(String title, String year, String imdbID, String type, String poster) {
         this.title = title;
         this.year = year;
@@ -60,6 +62,14 @@ public class VideoListInfoModel {
 
     public void setPoster(String poster) {
         this.poster = poster;
+    }
+
+    public String getActors() {
+        return actors;
+    }
+
+    public void setActors(String actors) {
+        this.actors = actors;
     }
 
     @Override

@@ -33,8 +33,19 @@
         android:textColor="#4C4C4C"
         android:textSize="27sp" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@+id/ic_video_poster"
+        android:text="Year"
+        android:textSize="20sp" />-->
+
+    <TextView
+        android:id="@+id/actors_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"

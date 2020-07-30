@@ -55,9 +55,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 .into(holder.itemBinding.icVideoPoster);
 
         holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
-        holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith(StringValues.STILL_GOING)
+        holder.itemBinding.actorsList.setText(videoListInfoModelList.get(position).getActors());
+        /*holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith(StringValues.STILL_GOING)
                 ? videoListInfoModelList.get(position).getYear() + StringValues.NOW
-                : videoListInfoModelList.get(position).getYear());
+                : videoListInfoModelList.get(position).getYear());*/
     }
 
     @Override

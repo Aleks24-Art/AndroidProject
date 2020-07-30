@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
 import ua.artemii.internshipmovieproject.services.DisposableService;
@@ -30,6 +32,8 @@ public class DetailVideoInfoViewModel extends ViewModel {
             Log.i(TAG, "Calling repository load method from DetailVideoInfoViewModel");
             VideoRepository.getInstance()
                     .loadDetailVideoInfo(id, plot)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<DetailVideoInfoModel>() {
                         @Override
                         public void onSubscribe(Disposable d) {
