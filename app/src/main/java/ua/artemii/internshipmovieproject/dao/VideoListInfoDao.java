@@ -15,7 +15,7 @@ import ua.artemii.internshipmovieproject.values.DatabaseHelper;
 @Dao
 public interface VideoListInfoDao {
     @Query(DatabaseHelper.GET_BY_KEY_WORD_QUERY)
-    Flowable<List<VideoListInfoModel>> getAllByKeyWord();
+    Flowable<List<VideoListInfoModel>> getAllByKeyWord(String keyWord);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(VideoListInfoModel user);

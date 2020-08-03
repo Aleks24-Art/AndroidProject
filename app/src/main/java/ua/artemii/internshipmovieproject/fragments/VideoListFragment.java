@@ -2,11 +2,11 @@ package ua.artemii.internshipmovieproject.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -46,8 +46,6 @@ public class VideoListFragment extends Fragment {
         updateVideoList();
         updateDownloadState();
 
-        videosVM.loadVideoList("Women");
-
         addCustomBackNavigation();
     }
 
@@ -60,6 +58,7 @@ public class VideoListFragment extends Fragment {
         videoListBinding =
                 FragmentVideoListBinding.inflate(inflater, container, false);
         initVideoRecyclerView();
+        initSearchBtn();
         return videoListBinding.getRoot();
     }
 
@@ -110,6 +109,16 @@ public class VideoListFragment extends Fragment {
                 .addCallback(this, callback);
     }
 
+    private void initSearchBtn() {
+        videoListBinding.btnSearch.setOnClickListener(v -> {
+            String keyWord = videoListBinding.etKeyWord.getText().toString();
+            if (!keyWord.equals("") && getActivity() != null) {
+                videosVM.loadVideoList(keyWord);
+                hideKeyboard(v);
+            }
+        });
+    }
+
     private void updateVideoList() {
         videosVM.getVideos().observe(this,
                 videoList -> adapter.setVideoListInfoModelList(videoList));
@@ -122,5 +131,11 @@ public class VideoListFragment extends Fragment {
                 Log.e(TAG, StringValues.DOWNLOAD_ERROR + ": ", throwable);
             }
         });
+    }
+
+    private void hideKeyboard(View v) {
+        ((InputMethodManager)getActivity()
+                .getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

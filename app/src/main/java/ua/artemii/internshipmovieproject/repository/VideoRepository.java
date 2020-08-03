@@ -50,6 +50,8 @@ public class VideoRepository {
                                 .map(detailVideoInfoModel -> {
                                     Log.d(TAG, "Thread — " + Thread.currentThread().getName());
                                     videoListInfoModel.setActors(detailVideoInfoModel.getActors());
+                                    // Setting keyWord to find video list using it
+                                    videoListInfoModel.setKeyWord(keyWord);
                                     Log.e(TAG, "Setting data to DB from API");
                                     // Cache data to db
                                     db.videoListDao().insert(videoListInfoModel);
@@ -59,8 +61,8 @@ public class VideoRepository {
                 .ignoreElement();
     }
 
-    public Flowable<List<VideoListInfoModel>> loadVideoListFromDatabase() {
-        return db.videoListDao().getAllByKeyWord();
+    public Flowable<List<VideoListInfoModel>> loadVideoListFromDatabase(String keyWord) {
+        return db.videoListDao().getAllByKeyWord(keyWord);
     }
 
     public Completable deleteAll() {

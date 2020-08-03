@@ -33,11 +33,11 @@ public class VideoListInfoViewModel extends ViewModel {
     public void loadVideoList(String keyWord) {
         Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
         cacheVideoList(keyWord);
-        loadVideoListFromDatabase();
+        loadVideoListFromDatabase(keyWord);
     }
 
-    private void loadVideoListFromDatabase() {
-        DisposableService.add(repository.loadVideoListFromDatabase()
+    private void loadVideoListFromDatabase(String keyWord) {
+        DisposableService.add(repository.loadVideoListFromDatabase(keyWord)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(t -> throwable.postValue(t))
                 .subscribe(list -> videos.postValue(list)));
