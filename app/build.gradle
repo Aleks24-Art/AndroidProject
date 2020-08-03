@@ -38,6 +38,7 @@ android {
 
 dependencies {
     def lifecycle_version = "2.2.0"
+    def room_version = "2.2.5"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -86,5 +87,11 @@ dependencies {
 
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.6'
+
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    //RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
 
 }

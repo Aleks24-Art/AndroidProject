@@ -4,9 +4,11 @@ import android.util.Log;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import ua.artemii.internshipmovieproject.database.VideoDatabase;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
@@ -18,9 +20,11 @@ public class VideoRepository {
     private static final String TAG = VideoRepository.class.getCanonicalName();
     private static VideoRepository instance;
     private VideoLoadService service;
+    private VideoDatabase db;
 
     private VideoRepository() {
         service = VideoLoadService.getInstance();
+        db = VideoDatabase.getInstance();
     }
 
     public static VideoRepository getInstance() {
@@ -34,7 +38,7 @@ public class VideoRepository {
         return service.getService().getDetailVideoInfo(id, plot);
     }
 
-    public Single<List<VideoListInfoModel>> loadVideoListInfo(String keyWord) {
+    public Completable loadVideoListFromApi(String keyWord) {
         return service.getService()
                 .getVideoListInfo(keyWord)
                 .map(Search::getVideoListInfoModelList)
@@ -46,8 +50,21 @@ public class VideoRepository {
                                 .map(detailVideoInfoModel -> {
                                     Log.d(TAG, "Thread — " + Thread.currentThread().getName());
                                     videoListInfoModel.setActors(detailVideoInfoModel.getActors());
+                                    Log.e(TAG, "Setting data to DB from API");
+                                    // Cache data to db
+                                    db.videoListDao().insert(videoListInfoModel);
                                     return videoListInfoModel;
                                 }))
-                .toList();
+                .toList()
+                .ignoreElement();
+    }
+
+    public Flowable<List<VideoListInfoModel>> loadVideoListFromDatabase() {
+        return db.videoListDao().getAllByKeyWord();
+    }
+
+    public Completable deleteAll() {
+        return db.videoListDao().deleteAll();
     }
 }
+

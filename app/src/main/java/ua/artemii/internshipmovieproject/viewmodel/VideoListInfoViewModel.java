@@ -2,13 +2,12 @@ package ua.artemii.internshipmovieproject.viewmodel;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import io.reactivex.Observer;
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -21,46 +20,49 @@ public class VideoListInfoViewModel extends ViewModel {
     private static final String TAG = VideoListInfoViewModel.class.getCanonicalName();
     private MutableLiveData<List<VideoListInfoModel>> videos = new MutableLiveData<>();
     private MutableLiveData<Throwable> throwable = new MutableLiveData<>();
+    private VideoRepository repository = VideoRepository.getInstance();
 
-    public LiveData<List<VideoListInfoModel>> getVideos() {
+    public MutableLiveData<List<VideoListInfoModel>> getVideos() {
         return videos;
     }
 
-    public LiveData<Throwable> getThrowable() {
+    public MutableLiveData<Throwable> getThrowable() {
         return throwable;
     }
 
     public void loadVideoList(String keyWord) {
-        if (videos.getValue() == null) {
-            Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
-            VideoRepository.getInstance()
-                    .loadVideoListInfo(keyWord)
-                    .toObservable()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<VideoListInfoModel>>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-                    DisposableService.add(d);
-                    Log.d(TAG, "onSubscribe: " + Thread.currentThread().getName());
-                }
+        Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
+        cacheVideoList(keyWord);
+        loadVideoListFromDatabase();
+    }
 
-                @Override
-                public void onNext(List<VideoListInfoModel> videoList) {
-                    videos.setValue(videoList);
-                    Log.d(TAG, "onNext: "  + Thread.currentThread().getName());
-                }
+    private void loadVideoListFromDatabase() {
+        DisposableService.add(repository.loadVideoListFromDatabase()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(t -> throwable.postValue(t))
+                .subscribe(list -> videos.postValue(list)));
 
-                @Override
-                public void onError(Throwable t) {
-                    throwable.setValue(t);
-                }
+    }
 
-                @Override
-                public void onComplete() {
-                    Log.d(TAG, "onComplete: " + Thread.currentThread().getName());
-                }
-            });
-        }
+    private void cacheVideoList(String keyWord) {
+        repository.loadVideoListFromApi(keyWord)
+                .subscribeOn(Schedulers.io())
+                .doOnError(Throwable::printStackTrace)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        DisposableService.add(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        throwable.postValue(e);
+                    }
+                });
     }
 }

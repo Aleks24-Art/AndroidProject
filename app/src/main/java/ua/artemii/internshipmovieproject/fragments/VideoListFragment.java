@@ -1,6 +1,8 @@
 package ua.artemii.internshipmovieproject.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.values.StringValues;
 import ua.artemii.internshipmovieproject.viewmodel.VideoListInfoViewModel;
 
 public class VideoListFragment extends Fragment {
@@ -89,7 +92,6 @@ public class VideoListFragment extends Fragment {
             @Override
             public void handleOnBackPressed() {
                 if (backPressedTime + 2000 > System.currentTimeMillis()) {
-                    Log.d(TAG, "Зашли в backPressedTime + 2000 > System.currentTimeMillis()");
                     backToast.cancel();
                     this.remove();
                     if (getActivity() != null) {
@@ -97,8 +99,7 @@ public class VideoListFragment extends Fragment {
                     }
                     return;
                 } else {
-                    Log.d(TAG, "Зашли в else");
-                    backToast = Toast.makeText(getContext(), "Нажмите ещё раз, чтобы выйти", Toast.LENGTH_SHORT);
+                    backToast = Toast.makeText(getContext(), StringValues.PRESS_AGAIN, Toast.LENGTH_SHORT);
                     backToast.show();
                 }
                 backPressedTime = System.currentTimeMillis();
@@ -117,8 +118,8 @@ public class VideoListFragment extends Fragment {
     private void updateDownloadState() {
         videosVM.getThrowable().observe(this, throwable -> {
             if (getContext() != null) {
-                Toast.makeText(getContext(), "Download error", Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Download error: ", throwable);
+                Toast.makeText(getContext(), StringValues.DOWNLOAD_ERROR, Toast.LENGTH_LONG).show();
+                Log.e(TAG, StringValues.DOWNLOAD_ERROR + ": ", throwable);
             }
         });
     }

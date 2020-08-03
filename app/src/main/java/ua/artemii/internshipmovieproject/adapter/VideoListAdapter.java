@@ -21,7 +21,6 @@ import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
-import ua.artemii.internshipmovieproject.values.StringValues;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 

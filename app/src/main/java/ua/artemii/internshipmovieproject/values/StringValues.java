@@ -7,4 +7,6 @@ public final class StringValues {
     public static final String PAUSE = "Pause";
     public static final String APP_NAME = "InternshipMovieProject";
     public static final String PLOT_TYPE = "full";
+    public static final String DOWNLOAD_ERROR = "Download error";
+    public static final String PRESS_AGAIN = "Press back again to exit";
 }

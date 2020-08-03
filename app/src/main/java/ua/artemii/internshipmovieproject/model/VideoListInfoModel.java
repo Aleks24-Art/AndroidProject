@@ -1,28 +1,31 @@
 package ua.artemii.internshipmovieproject.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.NotNull;
 
+import ua.artemii.internshipmovieproject.values.DatabaseHelper;
+
+@Entity(tableName = DatabaseHelper.VIDEO_LIST_TABLE)
 public class VideoListInfoModel {
+
+    @NonNull
+    @PrimaryKey
+    @SerializedName("imdbID")
+    @ColumnInfo(name = "id")
+    private String imdbID;
     @SerializedName("Title")
     private String title;
     @SerializedName("Year")
     private String year;
-    @SerializedName("imdbID")
-    private String imdbID;
-    @SerializedName("Type")
-    private String type;
     @SerializedName("Poster")
     private String poster;
-
     private String actors;
-
-    public VideoListInfoModel(String title, String year, String imdbID, String type, String poster) {
-        this.title = title;
-        this.year = year;
-        this.imdbID = imdbID;
-        this.type = type;
-        this.poster = poster;
-    }
+    @ColumnInfo(name = "key_word")
+    private String keyWord;
 
     public String getTitle() {
         return title;
@@ -48,14 +51,6 @@ public class VideoListInfoModel {
         this.imdbID = imdbID;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getPoster() {
         return poster;
     }
@@ -72,14 +67,24 @@ public class VideoListInfoModel {
         this.actors = actors;
     }
 
+    public String getKeyWord() {
+        return keyWord;
+    }
+
+    public void setKeyWord(String keyWord) {
+        this.keyWord = keyWord;
+    }
+
+    @NotNull
     @Override
     public String toString() {
-        return "ShortDescVideo{" +
-                "title='" + title + '\'' +
+        return "VideoListInfoModel{" +
+                "imdbID='" + imdbID + '\'' +
+                ", title='" + title + '\'' +
                 ", year='" + year + '\'' +
-                ", imdbID='" + imdbID + '\'' +
-                ", type='" + type + '\'' +
                 ", poster='" + poster + '\'' +
+                ", actors='" + actors + '\'' +
+                ", keyWord='" + keyWord + '\'' +
                 '}';
     }
 }
