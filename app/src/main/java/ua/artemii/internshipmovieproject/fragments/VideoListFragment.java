@@ -41,7 +41,8 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videosVM = new ViewModelProvider(this).get(VideoListInfoViewModel.class);
+        videosVM = new ViewModelProvider(this)
+                .get(VideoListInfoViewModel.class);
 
         updateVideoList();
         updateDownloadState();
@@ -81,7 +82,6 @@ public class VideoListFragment extends Fragment {
 
             adapter = new VideoListAdapter();
         }
-
         videoListBinding.rvVideo.setAdapter(adapter);
     }
 
@@ -113,6 +113,7 @@ public class VideoListFragment extends Fragment {
         videoListBinding.btnSearch.setOnClickListener(v -> {
             String keyWord = videoListBinding.etKeyWord.getText().toString();
             if (!keyWord.equals("") && getActivity() != null) {
+                Log.i(TAG, "Load films with keyWord " + keyWord);
                 videosVM.loadVideoList(keyWord);
                 hideKeyboard(v);
             }
@@ -134,7 +135,7 @@ public class VideoListFragment extends Fragment {
     }
 
     private void hideKeyboard(View v) {
-        ((InputMethodManager)getActivity()
+        ((InputMethodManager) getActivity()
                 .getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(v.getWindowToken(), 0);
     }

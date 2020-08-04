@@ -7,8 +7,6 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.Navigation;
 
-import io.reactivex.schedulers.Schedulers;
-import ua.artemii.internshipmovieproject.database.VideoDatabase;
 import ua.artemii.internshipmovieproject.databinding.ActivityMainBinding;
 import ua.artemii.internshipmovieproject.services.DisposableService;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
