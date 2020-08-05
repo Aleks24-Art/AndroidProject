@@ -13,7 +13,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
-import ua.artemii.internshipmovieproject.services.DisposableService;
 import ua.artemii.internshipmovieproject.values.StringValues;
 
 public class VideoListInfoViewModel extends ViewModel {
@@ -23,6 +22,8 @@ public class VideoListInfoViewModel extends ViewModel {
     private MutableLiveData<Throwable> throwable = new MutableLiveData<>();
     private VideoRepository repository = VideoRepository.getInstance();
     private Disposable dbLoadDisposable;
+    private Disposable cacheDisposable;
+    private boolean throwableReadyToShown;
 
     public MutableLiveData<List<VideoListInfoModel>> getVideos() {
         return videos;
@@ -33,36 +34,45 @@ public class VideoListInfoViewModel extends ViewModel {
     }
 
     public VideoListInfoViewModel() {
-        if (videos.getValue() == null) {
-            loadVideoList(StringValues.DEFAULT_WORD);
-        }
+        loadVideoList(StringValues.DEFAULT_WORD);
     }
 
     public void loadVideoList(String keyWord) {
-        Log.i(TAG, "Calling repository load method from VideoListInfoViewModel");
-        cacheVideoList(keyWord);
         if (dbLoadDisposable != null && !dbLoadDisposable.isDisposed()) {
             dbLoadDisposable.dispose();
         }
-        loadVideoListFromDatabase(keyWord);
-    }
-
-    private void loadVideoListFromDatabase(String keyWord) {
-        dbLoadDisposable = repository.loadVideoListFromDatabase(keyWord)
+        dbLoadDisposable = repository
+                .loadVideoListFromDatabase(keyWord)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(t -> throwable.setValue(t))
-                .subscribe(list -> videos.setValue(list));
-
+                .doOnError(t -> {
+                    if (!throwableReadyToShown) {
+                        throwable.postValue(t);
+                        setThrowableReadyToShown(true);
+                    }
+                })
+                .subscribe(list -> {
+                    if (list.isEmpty()) {
+                        Log.d(TAG, "getFromApi " + keyWord);
+                        cacheVideoList(keyWord);
+                    } else {
+                        Log.d(TAG, "getFromDb " + keyWord);
+                        Log.d(TAG, "List size: " + list.size());
+                        videos.postValue(list);
+                    }
+                });
     }
 
     private void cacheVideoList(String keyWord) {
+        if (cacheDisposable != null && !cacheDisposable.isDisposed()) {
+            cacheDisposable.dispose();
+        }
         repository.loadVideoListFromApi(keyWord)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        DisposableService.add(d);
+                        cacheDisposable = d;
                     }
 
                     @Override
@@ -71,8 +81,19 @@ public class VideoListInfoViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        throwable.setValue(e);
+                        if (!throwableReadyToShown) {
+                            throwable.postValue(e);
+                            setThrowableReadyToShown(true);
+                        }
                     }
                 });
+    }
+
+    public boolean isThrowableReadyToShown() {
+        return throwableReadyToShown;
+    }
+
+    public void setThrowableReadyToShown(boolean throwableReadyToShown) {
+        this.throwableReadyToShown = throwableReadyToShown;
     }
 }

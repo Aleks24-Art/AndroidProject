@@ -1,7 +1,6 @@
 package ua.artemii.internshipmovieproject.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +15,6 @@ public class DescriptionVideoFragment extends Fragment {
 
     private static final String TAG = DescriptionVideoFragment.class.getCanonicalName();
     private FragmentDescriptionVideoBinding descriptionVideoBinding;
-    private String fullPlot;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            DescriptionVideoFragmentArgs args =
-                    DescriptionVideoFragmentArgs.fromBundle(getArguments());
-            fullPlot = args.getFullPlot();
-        }
-    }
 
     @Nullable
     @Override
@@ -39,7 +27,12 @@ public class DescriptionVideoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i(TAG, "Setting full plot in DescriptionVideoFragment");
-        descriptionVideoBinding.description.setText(fullPlot);
+        if (getArguments() != null) {
+            DescriptionVideoFragmentArgs args =
+                    DescriptionVideoFragmentArgs.fromBundle(getArguments());
+            descriptionVideoBinding.description.setText(
+                    args.getFullPlot() == null
+                            ? "Plot is not found" : args.getFullPlot());
+        }
     }
 }

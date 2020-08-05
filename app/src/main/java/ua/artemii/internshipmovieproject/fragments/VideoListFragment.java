@@ -1,6 +1,8 @@
 package ua.artemii.internshipmovieproject.fragments;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,12 +43,6 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videosVM = new ViewModelProvider(this)
-                .get(VideoListInfoViewModel.class);
-
-        updateVideoList();
-        updateDownloadState();
-
         addCustomBackNavigation();
     }
 
@@ -59,8 +55,19 @@ public class VideoListFragment extends Fragment {
         videoListBinding =
                 FragmentVideoListBinding.inflate(inflater, container, false);
         initVideoRecyclerView();
-        initSearchBtn();
         return videoListBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        videosVM = new ViewModelProvider(this)
+                .get(VideoListInfoViewModel.class);
+
+        updateVideoList();
+        updateDownloadState();
+
+        initSearchBtn();
     }
 
     @Override
@@ -111,9 +118,8 @@ public class VideoListFragment extends Fragment {
 
     private void initSearchBtn() {
         videoListBinding.btnSearch.setOnClickListener(v -> {
-            String keyWord = videoListBinding.etKeyWord.getText().toString();
+            String keyWord = videoListBinding.etKeyWord.getText().toString().toLowerCase();
             if (!keyWord.equals("") && getActivity() != null) {
-                Log.i(TAG, "Load films with keyWord " + keyWord);
                 videosVM.loadVideoList(keyWord);
                 hideKeyboard(v);
             }
@@ -121,22 +127,28 @@ public class VideoListFragment extends Fragment {
     }
 
     private void updateVideoList() {
-        videosVM.getVideos().observe(this,
+        videosVM.getVideos().observe(getViewLifecycleOwner(),
                 videoList -> adapter.setVideoListInfoModelList(videoList));
     }
 
     private void updateDownloadState() {
-        videosVM.getThrowable().observe(this, throwable -> {
-            if (getContext() != null) {
-                Toast.makeText(getContext(), StringValues.DOWNLOAD_ERROR, Toast.LENGTH_LONG).show();
-                Log.e(TAG, StringValues.DOWNLOAD_ERROR + ": ", throwable);
-            }
-        });
+        videosVM.getThrowable().observe(getViewLifecycleOwner(),
+                throwable -> {
+                    if (getContext() != null && videosVM.isThrowableReadyToShown()) {
+                        Toast.makeText(getContext(), StringValues.DOWNLOAD_ERROR, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, StringValues.DOWNLOAD_ERROR + ": ", throwable);
+                        videosVM.setThrowableReadyToShown(false);
+                    }
+                });
     }
 
     private void hideKeyboard(View v) {
-        ((InputMethodManager) getActivity()
-                .getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(v.getWindowToken(), 0);
+        if (getActivity() != null) {
+            InputMethodManager imm = ((InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE));
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        }
     }
 }

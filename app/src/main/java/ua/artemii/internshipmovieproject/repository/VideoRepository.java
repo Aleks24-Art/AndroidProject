@@ -12,18 +12,18 @@ import ua.artemii.internshipmovieproject.database.VideoDatabase;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.model.Search;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
-import ua.artemii.internshipmovieproject.services.VideoLoadService;
+import ua.artemii.internshipmovieproject.services.VideoApiLoadService;
 import ua.artemii.internshipmovieproject.values.StringValues;
 
 public class VideoRepository {
 
     private static final String TAG = VideoRepository.class.getCanonicalName();
     private static VideoRepository instance;
-    private VideoLoadService service;
+    private VideoApiLoadService service;
     private VideoDatabase db;
 
     private VideoRepository() {
-        service = VideoLoadService.getInstance();
+        service = VideoApiLoadService.getInstance();
         db = VideoDatabase.getInstance();
     }
 

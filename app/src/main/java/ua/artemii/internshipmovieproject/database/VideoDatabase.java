@@ -2,6 +2,7 @@ package ua.artemii.internshipmovieproject.database;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -15,14 +16,12 @@ public abstract class VideoDatabase extends RoomDatabase {
 
     private static VideoDatabase instance;
 
-    public abstract VideoListInfoDao videoListDao();
-
     public static VideoDatabase getInstance() {
         return instance;
     }
 
-    public synchronized static void setContext(Context context) {
-        if (instance == null) {
+    public synchronized static void setContext(@Nullable Context context) {
+        if (instance == null && context != null) {
             instance = Room.databaseBuilder(
                     context, VideoDatabase.class,
                     DatabaseHelper.DATABASE_NAME)
@@ -30,4 +29,6 @@ public abstract class VideoDatabase extends RoomDatabase {
                     .build();
         }
     }
+
+    public abstract VideoListInfoDao videoListDao();
 }

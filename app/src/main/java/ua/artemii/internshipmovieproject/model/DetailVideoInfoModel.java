@@ -94,6 +94,10 @@ public class DetailVideoInfoModel {
         this.type = type;
     }
 
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
+
     @NotNull
     @Override
     public String toString() {

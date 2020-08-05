@@ -1,6 +1,9 @@
 package ua.artemii.internshipmovieproject.fragments;
 
+import android.content.Context;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +30,7 @@ import ua.artemii.internshipmovieproject.viewmodel.DetailVideoInfoViewModel;
 
 public class DetailVideoFragment extends Fragment {
 
-    private static final String TAG =
-            DetailVideoFragment.class.getCanonicalName();
-
+    private static final String TAG = DetailVideoFragment.class.getCanonicalName();
     private FragmentDetailVideoInfoBinding detailVideoInfoBinding;
     private DetailVideoInfoViewModel videosVM;
     private PlayerView playerView;
@@ -39,20 +40,8 @@ public class DetailVideoFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videosVM =
-                new ViewModelProvider(this)
-                            .get(DetailVideoInfoViewModel.class);
-
+        orientation = getResources().getConfiguration().orientation;
         playerService = SimpleExoPlayerService.getInstance();
-
-        updateDetailVideoInfo();
-        updateDownloadState();
-
-        if (getArguments() != null) {
-            DetailVideoFragmentArgs args =
-                    DetailVideoFragmentArgs.fromBundle(getArguments());
-            videosVM.loadDetailVideoInfo(args.getImdbID(), StringValues.PLOT_TYPE);
-        }
     }
 
     @Nullable
@@ -62,18 +51,37 @@ public class DetailVideoFragment extends Fragment {
             return detailVideoInfoBinding.getRoot();
         }
         detailVideoInfoBinding =
-                FragmentDetailVideoInfoBinding
-                        .inflate(inflater, container, false);
+                FragmentDetailVideoInfoBinding.inflate(inflater, container, false);
 
-        // Orientation initialize
-        orientation = getResources().getConfiguration().orientation;
-
-        // Player view initialize
         playerView =
                 orientation == Configuration.ORIENTATION_LANDSCAPE
-                        ? detailVideoInfoBinding.playerViewLandscape : detailVideoInfoBinding.playerViewPortrait;
+                ? detailVideoInfoBinding.playerViewLandscape : detailVideoInfoBinding.playerViewPortrait;
 
         return detailVideoInfoBinding.getRoot();
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        videosVM = new ViewModelProvider(this).get(DetailVideoInfoViewModel.class);
+
+        if (!isNetworkConnected()) {
+            detailVideoInfoBinding.svVideoInfo.setVisibility(View.INVISIBLE);
+            detailVideoInfoBinding.noConnection.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        updateDetailVideoInfo();
+        updateDownloadState();
+
+
+        if (getArguments() != null) {
+            DetailVideoFragmentArgs args = DetailVideoFragmentArgs.fromBundle(getArguments());
+            videosVM.loadDetailVideoInfo(args.getImdbID(), StringValues.PLOT_TYPE);
+        }
+
     }
 
     @Override
@@ -101,8 +109,15 @@ public class DetailVideoFragment extends Fragment {
         playerView.setPlayer(null);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        detailVideoInfoBinding.noConnection.setVisibility(View.GONE);
+        detailVideoInfoBinding.svVideoInfo.setVisibility(View.VISIBLE);
+    }
+
     private void updateDetailVideoInfo() {
-        videosVM.getVideos().observe(this, detailVideoInfo -> {
+        videosVM.getVideos().observe(getViewLifecycleOwner(), detailVideoInfo -> {
             loadBigPoster(detailVideoInfo.getPosterUrl());
             detailVideoInfoBinding.bigTitle.setText(detailVideoInfo.getTitle());
             detailVideoInfoBinding.releasedInfo.setText((detailVideoInfo.getReleased()));
@@ -122,10 +137,11 @@ public class DetailVideoFragment extends Fragment {
     }
 
     private void updateDownloadState() {
-        videosVM.getThrowable().observe(this, throwable -> {
-            if (getContext() != null) {
+        videosVM.getThrowable().observe(getViewLifecycleOwner(), throwable -> {
+            if (getContext() != null && videosVM.isThrowableReadyToShown()) {
                 Toast.makeText(getContext(), "Download error", Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Download error: ", throwable);
+                videosVM.setThrowableReadyToShown(false);
             }
         });
     }
@@ -182,8 +198,9 @@ public class DetailVideoFragment extends Fragment {
                     playerService.setStarted(true);
                 }
             }
-        });
 
+        });
+        //Continue playing video depend on orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE && playerService.isStarted()) {
             playVideoLandscape();
         }
@@ -206,5 +223,18 @@ public class DetailVideoFragment extends Fragment {
         playerView.setVisibility(View.VISIBLE);
         //Starting video from last checked pos
         playerService.preparePlayer();
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = null;
+        NetworkInfo activeNetwork = null;
+        if (getActivity() != null) {
+            cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 }

@@ -43,11 +43,12 @@ public class VideoListInfoModel {
         this.year = year;
     }
 
+    @NotNull
     public String getImdbID() {
         return imdbID;
     }
 
-    public void setImdbID(String imdbID) {
+    public void setImdbID(@NotNull String imdbID) {
         this.imdbID = imdbID;
     }
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,18 +18,19 @@ import java.util.List;
 
 import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.ItemVideoBinding;
-import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
-    private static final String TAG = VideoListFragment.class.getCanonicalName();
+    private static final String TAG = VideoListAdapter.class.getCanonicalName();
     private List<VideoListInfoModel> videoListInfoModelList = Collections.emptyList();
 
-    public void setVideoListInfoModelList(List<VideoListInfoModel> videoListInfoModelList) {
-        this.videoListInfoModelList = videoListInfoModelList;
+    public void setVideoListInfoModelList(@Nullable List<VideoListInfoModel> videoListInfoModelList) {
+        this.videoListInfoModelList =
+                videoListInfoModelList == null
+                        ? this.videoListInfoModelList = Collections.emptyList() : videoListInfoModelList;
         notifyDataSetChanged();
     }
 
@@ -55,9 +57,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
         holder.itemBinding.actorsList.setText(videoListInfoModelList.get(position).getActors());
-        /*holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith(StringValues.STILL_GOING)
-                ? videoListInfoModelList.get(position).getYear() + StringValues.NOW
-                : videoListInfoModelList.get(position).getYear());*/
     }
 
     @Override

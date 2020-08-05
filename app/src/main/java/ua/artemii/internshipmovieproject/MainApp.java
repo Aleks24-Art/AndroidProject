@@ -9,7 +9,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.database.VideoDatabase;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
-import ua.artemii.internshipmovieproject.services.DisposableService;
 import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
 
 public class MainApp extends Application {
@@ -18,14 +17,13 @@ public class MainApp extends Application {
         super.onCreate();
         SimpleExoPlayerService.getInstance().initPlayer(getApplicationContext());
         VideoDatabase.setContext(getApplicationContext());
-        VideoRepository.getInstance()
+        /*VideoRepository.getInstance()
                 .deleteAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-                DisposableService.add(d);
             }
 
             @Override
@@ -37,6 +35,6 @@ public class MainApp extends Application {
             public void onError(Throwable e) {
 
             }
-        });
+        });*/
     }
 }

@@ -4,13 +4,13 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class VideoLoadService {
+public class VideoApiLoadService {
 
-    private static VideoLoadService instance;
+    private static VideoApiLoadService instance;
     private static final String BASE_URL = "http://www.omdbapi.com/";
     private VideoItemService service;
 
-    private VideoLoadService() {
+    private VideoApiLoadService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -20,9 +20,9 @@ public class VideoLoadService {
         service = retrofit.create(VideoItemService.class);
     }
 
-    public static VideoLoadService getInstance() {
+    public static VideoApiLoadService getInstance() {
         if (instance == null) {
-            instance = new VideoLoadService();
+            instance = new VideoApiLoadService();
         }
         return instance;
     }
