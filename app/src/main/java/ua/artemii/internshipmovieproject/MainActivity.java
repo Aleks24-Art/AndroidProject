@@ -7,12 +7,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.Navigation;
 
 import ua.artemii.internshipmovieproject.databinding.ActivityMainBinding;
-import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.services.VideoPlayer;
 
+/**
+ * Main activity which contain all fragments, going after splash screen
+ */
 public class MainActivity extends AppCompatActivity {
-    /**
-     * Default class TAG
-     */
+
     public static final String TAG = MainActivity.class.getCanonicalName();
 
     @Override
@@ -34,6 +35,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        SimpleExoPlayerService.getInstance().getPlayer().setPlayWhenReady(false);
+        VideoPlayer.getInstance().getPlayer().setPlayWhenReady(false);
     }
 }

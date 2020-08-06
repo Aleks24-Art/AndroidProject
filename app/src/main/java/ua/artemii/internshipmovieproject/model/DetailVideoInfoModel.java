@@ -1,9 +1,11 @@
 package ua.artemii.internshipmovieproject.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Default POJO class to download detail video info
+ */
 public class DetailVideoInfoModel {
 
     @SerializedName("Title")

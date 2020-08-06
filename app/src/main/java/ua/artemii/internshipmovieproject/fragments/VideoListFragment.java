@@ -1,8 +1,6 @@
 package ua.artemii.internshipmovieproject.fragments;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,23 +19,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ua.artemii.internshipmovieproject.adapter.VideoListAdapter;
 import ua.artemii.internshipmovieproject.databinding.FragmentVideoListBinding;
-import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.services.VideoPlayer;
 import ua.artemii.internshipmovieproject.values.StringValues;
 import ua.artemii.internshipmovieproject.viewmodel.VideoListInfoViewModel;
 
+/**
+ * Start app fragment with video list, going after splash screen in main activity
+ */
 public class VideoListFragment extends Fragment {
 
     private static final String TAG = VideoListFragment.class.getCanonicalName();
     private FragmentVideoListBinding videoListBinding;
     private VideoListAdapter adapter;
     private VideoListInfoViewModel videosVM;
-    /**
-     * Toast for back button
-     */
+    // Toast for back button
     private Toast backToast;
-    /**
-     * Timer for count pause between clicking
-     */
+    // Timer for count pause between clicking
     private long backPressedTime;
 
     @Override
@@ -64,16 +61,18 @@ public class VideoListFragment extends Fragment {
         videosVM = new ViewModelProvider(this)
                 .get(VideoListInfoViewModel.class);
 
+        // Subscribe on live data
         updateVideoList();
         updateDownloadState();
 
+        // Init button. LiveData trigger there
         initSearchBtn();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        SimpleExoPlayerService.getInstance().zeroingPlayerPosition();
+        VideoPlayer.getInstance().zeroingPlayerPosition();
     }
 
     private void initVideoRecyclerView() {
@@ -92,8 +91,12 @@ public class VideoListFragment extends Fragment {
         videoListBinding.rvVideo.setAdapter(adapter);
     }
 
+    /* Custom back pressed navigation
+    If you are on VideoListFragment and press back btn
+    it will show toast "Press again to exit"
+    to exit you need to press it in next 2 seconds */
     private void addCustomBackNavigation() {
-        // This callback will only be called when VideoListFragment is at least Started.
+        // This callback will only be called when VideoListFragment is at least Started
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -120,6 +123,7 @@ public class VideoListFragment extends Fragment {
         videoListBinding.btnSearch.setOnClickListener(v -> {
             String keyWord = videoListBinding.etKeyWord.getText().toString().toLowerCase();
             if (!keyWord.equals("") && getActivity() != null) {
+                // LiveData trigger
                 videosVM.loadVideoList(keyWord);
                 hideKeyboard(v);
             }
@@ -142,6 +146,7 @@ public class VideoListFragment extends Fragment {
                 });
     }
 
+    // Hide Keyboard after searching
     private void hideKeyboard(View v) {
         if (getActivity() != null) {
             InputMethodManager imm = ((InputMethodManager) getActivity()

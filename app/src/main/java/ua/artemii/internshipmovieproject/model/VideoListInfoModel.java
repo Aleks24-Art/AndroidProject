@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import ua.artemii.internshipmovieproject.values.DatabaseHelper;
 
+/**
+ * Default POJO class which will turn out from Search
+ */
 @Entity(tableName = DatabaseHelper.VIDEO_LIST_TABLE)
 public class VideoListInfoModel {
 

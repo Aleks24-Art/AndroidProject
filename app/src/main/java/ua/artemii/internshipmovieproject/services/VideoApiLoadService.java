@@ -20,6 +20,10 @@ public class VideoApiLoadService {
         service = retrofit.create(VideoItemService.class);
     }
 
+    /**
+     * Getting single instance
+     * @return load service instance
+     */
     public static VideoApiLoadService getInstance() {
         if (instance == null) {
             instance = new VideoApiLoadService();

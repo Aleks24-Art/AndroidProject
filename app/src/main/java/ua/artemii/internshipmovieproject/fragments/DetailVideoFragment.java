@@ -24,24 +24,29 @@ import com.google.android.exoplayer2.ui.PlayerView;
 
 import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.FragmentDetailVideoInfoBinding;
-import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
+import ua.artemii.internshipmovieproject.services.VideoPlayer;
 import ua.artemii.internshipmovieproject.values.StringValues;
 import ua.artemii.internshipmovieproject.viewmodel.DetailVideoInfoViewModel;
 
+/**
+ * To load from API detail info about video
+ * If connection is not available — show appropriate view,
+ * else start download info
+ */
 public class DetailVideoFragment extends Fragment {
 
     private static final String TAG = DetailVideoFragment.class.getCanonicalName();
     private FragmentDetailVideoInfoBinding detailVideoInfoBinding;
     private DetailVideoInfoViewModel videosVM;
     private PlayerView playerView;
-    private SimpleExoPlayerService playerService;
+    private VideoPlayer playerService;
     private int orientation;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         orientation = getResources().getConfiguration().orientation;
-        playerService = SimpleExoPlayerService.getInstance();
+        playerService = VideoPlayer.getInstance();
     }
 
     @Nullable
@@ -73,6 +78,7 @@ public class DetailVideoFragment extends Fragment {
             return;
         }
 
+        // Subscribe on live data
         updateDetailVideoInfo();
         updateDownloadState();
 
@@ -97,13 +103,13 @@ public class DetailVideoFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        SimpleExoPlayerService.getInstance().getPlayer().stop();
+        VideoPlayer.getInstance().getPlayer().stop();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (SimpleExoPlayerService.getInstance().isStarted()) {
+        if (VideoPlayer.getInstance().isStarted()) {
             playerService.updateCurrentPlayerPosition();
         }
         playerView.setPlayer(null);
@@ -147,7 +153,7 @@ public class DetailVideoFragment extends Fragment {
     }
 
     private void loadBigPoster(String posterUrl) {
-        Log.d(TAG, "LoadBigPoster!!!");
+        Log.d(TAG, "Load big poster with url: " + posterUrl);
         if (getContext() != null) {
             Glide.with(getContext())
                     .asBitmap()

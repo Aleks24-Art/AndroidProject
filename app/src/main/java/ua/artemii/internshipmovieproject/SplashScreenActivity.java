@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import ua.artemii.internshipmovieproject.databinding.ActivitySplashScreenBinding;
 
+/**
+ * Activity to show splash screen
+ */
 public class SplashScreenActivity extends AppCompatActivity {
     public static final int SPLASH_SCREEN_DURATION = 2000;
 

@@ -1,5 +1,8 @@
 package ua.artemii.internshipmovieproject.values;
 
+/**
+ * Class with room database request constant
+ */
 public final class DatabaseHelper {
     public static final String DATABASE_NAME = "video_database";
     public static final String VIDEO_LIST_TABLE = "video_list";

@@ -11,6 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import ua.artemii.internshipmovieproject.databinding.FragmentDescriptionVideoBinding;
 
+/**
+ * Show video plot if it's exist,
+ * else show "Plot is not found"
+ */
 public class DescriptionVideoFragment extends Fragment {
 
     private static final String TAG = DescriptionVideoFragment.class.getCanonicalName();
@@ -31,7 +35,7 @@ public class DescriptionVideoFragment extends Fragment {
             DescriptionVideoFragmentArgs args =
                     DescriptionVideoFragmentArgs.fromBundle(getArguments());
             descriptionVideoBinding.description.setText(
-                    args.getFullPlot() == null
+                    args.getFullPlot() != null && args.getFullPlot().equals("N/A")
                             ? "Plot is not found" : args.getFullPlot());
         }
     }

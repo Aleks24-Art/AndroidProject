@@ -37,6 +37,11 @@ public class VideoListInfoViewModel extends ViewModel {
         loadVideoList(StringValues.DEFAULT_WORD);
     }
 
+    /**
+     *  Call repository method to get data from room database
+     *  and subscribe to get it
+     * @param keyWord param to download
+     */
     public void loadVideoList(String keyWord) {
         if (dbLoadDisposable != null && !dbLoadDisposable.isDisposed()) {
             dbLoadDisposable.dispose();
@@ -62,6 +67,10 @@ public class VideoListInfoViewModel extends ViewModel {
                 });
     }
 
+    /**
+     *  Call repository method to download data and cache it to room database
+     * @param keyWord param to download
+     */
     private void cacheVideoList(String keyWord) {
         if (cacheDisposable != null && !cacheDisposable.isDisposed()) {
             cacheDisposable.dispose();

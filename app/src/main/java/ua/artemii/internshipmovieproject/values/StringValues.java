@@ -1,5 +1,8 @@
 package ua.artemii.internshipmovieproject.values;
 
+/**
+ * Class with constant
+ */
 public final class StringValues {
     public static final String STILL_GOING = "-";
     public static final String NOW = "nowadays";
