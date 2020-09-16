@@ -12,12 +12,18 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.artemii.internshipmovieproject.model.DetailVideoInfoModel;
 import ua.artemii.internshipmovieproject.repository.VideoRepository;
-import ua.artemii.internshipmovieproject.services.DisposableService;
 
+/**
+ * ViewModel class for detail video info
+ * Includes two live data with detail info and throwable
+ */
 public class DetailVideoInfoViewModel extends ViewModel {
     private static final String TAG = DetailVideoInfoViewModel.class.getCanonicalName();
     private MutableLiveData<DetailVideoInfoModel> videos = new MutableLiveData<>();
     private MutableLiveData<Throwable> throwable = new MutableLiveData<>();
+    private VideoRepository repository = VideoRepository.getInstance();
+    private Disposable detailLoadDisposable;
+    private boolean throwableReadyToShown;
 
     public LiveData<DetailVideoInfoModel> getVideos() {
         return videos;
@@ -27,17 +33,24 @@ public class DetailVideoInfoViewModel extends ViewModel {
         return throwable;
     }
 
+    /**
+     * Call repository method to download data and subscribe to get it
+     * @param id video imdbId
+     * @param plot type of video plot
+     */
     public void loadDetailVideoInfo(String id, String plot) {
         if (videos.getValue() == null) {
+            if (detailLoadDisposable != null && !detailLoadDisposable.isDisposed()) {
+                detailLoadDisposable.dispose();
+            }
             Log.i(TAG, "Calling repository load method from DetailVideoInfoViewModel");
-            VideoRepository.getInstance()
-                    .loadDetailVideoInfo(id, plot)
+           repository.loadDetailVideoInfo(id, plot)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<DetailVideoInfoModel>() {
                         @Override
-                        public void onSubscribe(Disposable d) {
-                            DisposableService.add(d);
+                        public void onSubscribe(Disposable d){
+                            detailLoadDisposable = d;
                         }
 
                         @Override
@@ -47,7 +60,10 @@ public class DetailVideoInfoViewModel extends ViewModel {
 
                         @Override
                         public void onError(Throwable t) {
-                            throwable.setValue(t);
+                            if (!throwableReadyToShown) {
+                                throwable.postValue(t);
+                                setThrowableReadyToShown(true);
+                            }
                         }
 
                         @Override
@@ -55,5 +71,13 @@ public class DetailVideoInfoViewModel extends ViewModel {
                         }
                     });
         }
+    }
+
+    public boolean isThrowableReadyToShown() {
+        return throwableReadyToShown;
+    }
+
+    public void setThrowableReadyToShown(boolean throwableReadyToShown) {
+        this.throwableReadyToShown = throwableReadyToShown;
     }
 }

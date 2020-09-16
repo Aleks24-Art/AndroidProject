@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Default POJO wrapper class to download video list
+ */
 public class Search {
     @SerializedName("Search")
     private List<VideoListInfoModel> videoListInfoModelList;

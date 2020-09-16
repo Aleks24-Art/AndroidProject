@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,19 +18,29 @@ import java.util.List;
 
 import ua.artemii.internshipmovieproject.R;
 import ua.artemii.internshipmovieproject.databinding.ItemVideoBinding;
-import ua.artemii.internshipmovieproject.fragments.VideoListFragment;
 import ua.artemii.internshipmovieproject.fragments.VideoListFragmentDirections;
 import ua.artemii.internshipmovieproject.model.VideoListInfoModel;
-import ua.artemii.internshipmovieproject.services.SimpleExoPlayerService;
-import ua.artemii.internshipmovieproject.values.StringValues;
+import ua.artemii.internshipmovieproject.services.VideoPlayer;
 
+/**
+ * RecyclerView adapter to display video list
+ * On every item it's download poster
+ * and setting needed video description
+ */
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
 
-    private static final String TAG = VideoListFragment.class.getCanonicalName();
+    private static final String TAG = VideoListAdapter.class.getCanonicalName();
     private List<VideoListInfoModel> videoListInfoModelList = Collections.emptyList();
 
-    public void setVideoListInfoModelList(List<VideoListInfoModel> videoListInfoModelList) {
-        this.videoListInfoModelList = videoListInfoModelList;
+    /**
+     *  For setting new video list
+     *  if list is null than setting empty list
+     * @param videoListInfoModelList that we get from API or Db
+     */
+    public void setVideoListInfoModelList(@Nullable List<VideoListInfoModel> videoListInfoModelList) {
+        this.videoListInfoModelList =
+                videoListInfoModelList == null
+                        ? this.videoListInfoModelList = Collections.emptyList() : videoListInfoModelList;
         notifyDataSetChanged();
     }
 
@@ -56,9 +67,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         holder.itemBinding.title.setText(videoListInfoModelList.get(position).getTitle());
         holder.itemBinding.actorsList.setText(videoListInfoModelList.get(position).getActors());
-        /*holder.itemBinding.year.setText(videoListInfoModelList.get(position).getYear().endsWith(StringValues.STILL_GOING)
-                ? videoListInfoModelList.get(position).getYear() + StringValues.NOW
-                : videoListInfoModelList.get(position).getYear());*/
     }
 
     @Override
@@ -68,7 +76,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ItemVideoBinding itemBinding;
+        private ItemVideoBinding itemBinding;
 
         VideoViewHolder(@NonNull ItemVideoBinding itemBinding) {
             super(itemBinding.getRoot());
@@ -78,10 +86,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         @Override
         public void onClick(View v) {
-            //Navigate from videoListFragment to detailVideoInfoFragment
-            SimpleExoPlayerService.getInstance().zeroingPlayerPosition();
-            SimpleExoPlayerService.getInstance().setStarted(false);
+            // Setting to start player next time from begin
+            VideoPlayer.getInstance().zeroingPlayerPosition();
+            VideoPlayer.getInstance().setStarted(false);
 
+            //Navigate from videoListFragment to detailVideoInfoFragment
             VideoListFragmentDirections.ActionVideoListFragmentToDetailVideoInfoFragment action =
                             VideoListFragmentDirections.actionVideoListFragmentToDetailVideoInfoFragment(
                                             videoListInfoModelList.get(getAdapterPosition()).getImdbID());
